@@ -16,16 +16,16 @@ namespace GurevichI_PASS2
 
         private int _hp;
 
-        public bool Exploded { get; set; }
-        public bool ToRemove { get; set; }
-        public Vector2 DeathPosition { get; set; }
+        public bool Exploded;
+        public bool ToRemove;
+        public Vector2 DeathPosition;
 
 
         private float explosionDuration = 0.5f; // Duration of the explosion in seconds
         private float explosionTimer = 0f;
 
         public Creeper(ContentManager content, Texture2D texture, Vector2 position, Vector2 playerPosition, float speed, GraphicsDevice graphicsDevice, Texture2D explosionTexture, int hp)
-    : base(texture, position, 2, hp)
+    : base(texture, position, 1, hp)
         {
             PointValue = 40;
             this.position = position;
@@ -40,11 +40,7 @@ namespace GurevichI_PASS2
             ToRemove = false;
         }
 
-        public new int Hp
-        {
-            get { return _hp; }
-            set { _hp = value; }
-        }
+
 
 
 

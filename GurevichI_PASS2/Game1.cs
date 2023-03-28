@@ -59,6 +59,8 @@ namespace GurevichI_PASS2
 
         int arrowDamage = 1;
         int creeperHp = 4;
+        int villagerHp = 1;
+        int skeletonHp = 4;
 
         private int currentLevel = 1;
         private float elapsedSpawnTime = 0f;
@@ -70,6 +72,8 @@ namespace GurevichI_PASS2
         private float creeperSpeed;
 
         private float skeletonSpeed;
+
+        private bool levelInitialized = false;
 
         private GraphicsDevice graphicsDevice;
 
@@ -110,7 +114,6 @@ namespace GurevichI_PASS2
             grass2Texture = Content.Load<Texture2D>("Sized/Grass2_64");
             grass1Texture = Content.Load<Texture2D>("Sized/Grass1_64");
             dirtTexture = Content.Load<Texture2D>("Sized/Dirt_64");
-
 
             player = new Player(playerTexture, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - playerTexture.Height), 3f);
 
@@ -162,7 +165,11 @@ namespace GurevichI_PASS2
 
             }
 
-            UpdateLevelSettings();
+            if (!levelInitialized)
+            {
+                UpdateLevelSettings(currentLevel);
+                levelInitialized = true;
+            }
 
             elapsedSpawnTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -258,6 +265,36 @@ namespace GurevichI_PASS2
                             }
                         }
                     }
+                    else if (mobs[j] is Villager)
+                    {
+                        Villager villager = (Villager)mobs[j];
+                        if (arrows[i].BoundingBox.Intersects(villager.BoundingBox))
+                        {
+                            villager.Hp -= arrows[i]._damage;
+
+                            if (villager.Hp <= 0)
+                            {
+                                mobs.RemoveAt(j);
+                            }
+                            arrows.RemoveAt(i);
+                            break;
+                        }
+                    }
+                    else if (mobs[j] is Skeleton)
+                    {
+                        Skeleton skeleton = (Skeleton)mobs[j];
+                        if (arrows[i].BoundingBox.Intersects(skeleton.BoundingBox))
+                        {
+                            skeleton.Hp -= arrows[i]._damage;
+
+                            if (skeleton.Hp <= 0)
+                            {
+                                mobs.RemoveAt(j);
+                            }
+                            arrows.RemoveAt(i);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -319,8 +356,10 @@ namespace GurevichI_PASS2
             base.Draw(gameTime);
         }
 
-        private void UpdateLevelSettings()
+        private void UpdateLevelSettings(int currentLevel)
         {
+            levelInitialized = false;
+
             switch (currentLevel)
             {
                 case 1:
@@ -360,21 +399,21 @@ namespace GurevichI_PASS2
                 case 1:
                     if (randomValue <= 70)
                     {
-                        villagerSpeed = 100f;
+                        villagerSpeed = 2f;
                         villagerPosition = new Vector2(-villagerTexture.Width, random.Next(0, GraphicsDevice.Viewport.Height - villagerTexture.Height));
-                        newMob = new Villager(content, villagerPosition, villagerSpeed, graphicsDevice);
+                        newMob = new Villager(content, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
                     }
                     else if (randomValue <= 90)
                     {
-                        creeperSpeed = 1.5f;
+                        creeperSpeed = 10f;
                         creeperPosition = new Vector2(random.Next(0, graphicsDevice.Viewport.Width - creeperTexture.Width), -creeperTexture.Height);
                         newMob = new Creeper(content, creeperTexture, creeperPosition, player.Position, creeperSpeed, graphicsDevice, explodeTexture, creeperHp);
                     }
                     else
                     {
-                        skeletonSpeed = 1.5f;
+                        skeletonSpeed = 10f;
                         skeletonPosition = new Vector2(graphicsDevice.Viewport.Width / 2 - skeletonTexture.Width / 2, -skeletonTexture.Height);
-                        newMob = new Skeleton(content, skeletonTexture, skeletonPosition, skeletonSpeed, graphicsDevice);
+                        newMob = new Skeleton(content, skeletonTexture, skeletonPosition, skeletonSpeed, graphicsDevice, skeletonHp);
                     }
                     break;
             }

@@ -8,8 +8,9 @@ namespace GurevichI_PASS2
 {
     public class Player
     {
-        public Texture2D Texture { get; private set; }
-        public Vector2 Position { get; private set; }
+        public Texture2D Texture;
+        public Vector2 Position;
+
         private float speed = 3f;
         public Player(Texture2D texture, Vector2 position, float speed)
         {

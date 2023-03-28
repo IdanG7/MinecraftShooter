@@ -18,19 +18,7 @@ namespace GurevichI_PASS2
             this.speed = speed;
         }
 
-        public void LoadContent(ContentManager content)
-        {
-
-
-            Texture = content.Load<Texture2D>("Sized/Steve_64");
-        }
-
-        public void Initialize(int screenWidth, int screenHeight)
-        {
-            Position = new Vector2(screenWidth / 2 - Texture.Width / 2, screenHeight - Texture.Height);
-        }
-
-        public void Update(KeyboardState keyboardState, float deltaTime, int screenWidth)
+        public void Update(KeyboardState keyboardState, int screenWidth)
         {
             Vector2 newPosition = Position;
 
@@ -38,7 +26,7 @@ namespace GurevichI_PASS2
             {
                 newPosition.X -= speed;
             }
-            if (keyboardState.IsKeyDown(Keys.Right))
+            else if (keyboardState.IsKeyDown(Keys.Right))
             {
                 newPosition.X += speed;
             }

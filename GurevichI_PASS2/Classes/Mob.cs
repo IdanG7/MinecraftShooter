@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GurevichI_PASS2
 {
-    public abstract class Mob
+    public class Mob
     {
         public Texture2D Texture { get; set; }
         public Vector2 Position { get; set; }
@@ -22,9 +22,24 @@ namespace GurevichI_PASS2
             IsDead = false;
         }
 
-        public abstract void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice);
+        public virtual void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice)
+        {
 
-        public abstract void Draw(SpriteBatch spriteBatch);
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+
+        }
+
+        public Rectangle BoundingBox
+        {
+            get
+            {
+
+                return new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            }
+        }
 
     }
 }

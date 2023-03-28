@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,77 +9,130 @@ namespace GurevichI_PASS2
     public class Skeleton : Mob
     {
         private const float Tolerance = 0.5f;
-        private const float RotationSpeed = 0.05f;
+        private const float RotationSpeed = 0.025f;
         private const int SpiralRotations = 4;
 
-        private Texture2D texture;
+        private int directionX;
+
         private Vector2 position;
-        private Vector2 _center;
-        private float _angle;
-        private float _radius;
-        private bool _reachedCenter;
-        private bool _finishedSpiral;
-        private int _rotationCount;
+
+        private Vector2 center;
+        private float angle;
+        private float radius;
+        private bool reachedCenter;
+        private bool finishedSpiral;
+        private int rotationCount;
+
+        private List<Arrow> arrows;
+        private Texture2D arrowTexture;
+
+        int arrowDamage = 1;
+
+        private float rateOfFireTimer;
+
+        private float arrowSpeed = 5f;
 
         private GraphicsDevice graphicsDevice;
 
-        public Skeleton(ContentManager content, Texture2D texture, Vector2 position, float speed, GraphicsDevice graphicsDevice)
-            : base(texture, position, 100, 4)
+        public Skeleton(ContentManager content, Texture2D Texture, Vector2 position, float speed, GraphicsDevice graphicsDevice)
+            : base(content.Load<Texture2D>("Sized/Skeleton_64"), position, 100, 1)
         {
-            _center = new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height / 2);
-            _radius = Vector2.Distance(position, _center) * 6.5f; // decrease radius by 25%
-            ;
-            _angle = (float)Math.Atan2(position.Y - _center.Y, position.X - _center.X);
-            _reachedCenter = false;
-            _finishedSpiral = false;
-            _rotationCount = 0;
+            center = new Vector2(position.X, position.Y + graphicsDevice.Viewport.Height / 2);
+
+            radius = Vector2.Distance(position, center) * 0.75f;
+            angle = (float)Math.Atan2(position.Y - center.Y, position.X - center.X);
+            reachedCenter = false;
+            finishedSpiral = false;
+            rotationCount = 0;
+
+            directionX = 1;
 
             this.position = position;
             this.graphicsDevice = graphicsDevice;
-            this.texture = content.Load<Texture2D>("Sized/Skeleton_64");
+
+            arrowTexture = content.Load<Texture2D>("Sized/ArrowDown");
+
+            // Initialize the arrows list
+            arrows = new List<Arrow>();
         }
 
         public override void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice)
         {
-            if (!_reachedCenter)
+            if (!reachedCenter)
             {
                 position.Y += Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                if (position.Y >= _center.Y && position.Y <= _center.Y)
+                if (Math.Abs(position.Y - center.Y) <= Tolerance)
                 {
-                    _reachedCenter = true;
-                    _radius = Vector2.Distance(position, _center);
+                    reachedCenter = true;
                 }
             }
-            else if (_reachedCenter == true)
+            else if (!finishedSpiral)
             {
-                _angle += RotationSpeed;
-                _radius -= Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                position = _center + _radius * new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
+                angle += RotationSpeed;
+                position = center + radius * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-                if (_angle >= MathHelper.TwoPi)
+                if (angle >= MathHelper.TwoPi)
                 {
-                    _angle -= MathHelper.TwoPi;
-                    _rotationCount++;
+                    angle -= MathHelper.TwoPi;
+                    rotationCount++;
                 }
 
-                if (_rotationCount >= SpiralRotations)
+                if (rotationCount >= SpiralRotations)
                 {
-                    _finishedSpiral = true;
+                    finishedSpiral = true;
                 }
             }
             else
             {
-                position.X += Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                position.X += Speed * directionX * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (position.X <= 0)
+                {
+                    position.X = 0;
+                    directionX = 1;
+                }
+                else if (position.X + Texture.Width >= graphicsDevice.Viewport.Width)
+                {
+                    position.X = graphicsDevice.Viewport.Width - Texture.Width;
+                    directionX = -1;
+                }
+            }
+
+            rateOfFireTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (rateOfFireTimer >= 1.5f)
+            {
+                Vector2 arrowPosition = new Vector2(position.X + Texture.Width / 2, position.Y);
+                Arrow arrow = new Arrow(arrowTexture, position, arrowSpeed, 1, arrowDamage);
+
+                arrows.Add(arrow);
+                rateOfFireTimer = 0;
+            }
+
+            for (int i = arrows.Count - 1; i >= 0; i--)
+            {
+                arrows[i].Update(gameTime);
+                if (arrows[i]._position.Y < 0 || arrows[i]._position.Y > graphicsDevice.Viewport.Height)
+                {
+                    arrows.RemoveAt(i);
+                }
             }
         }
 
-
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, Color.White);
+            // Draw the skeleton
+            spriteBatch.Draw(Texture, position, Color.White);
+
+            // Draw the arrows
+            foreach (Arrow arrow in arrows)
+            {
+                arrow.Draw(spriteBatch);
+            }
         }
     }
-
-
 }
+
+
+

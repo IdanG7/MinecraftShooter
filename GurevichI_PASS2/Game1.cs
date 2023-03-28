@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
-using GurevichI_PASS2;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,10 +34,14 @@ namespace GurevichI_PASS2
         Texture2D cobblestoneTexture;
         Texture2D grass1Texture;
         Texture2D grass2Texture;
+        Texture2D dirtTexture;
+
 
         private List<Rectangle> grass1Rectangles = new List<Rectangle>();
         private List<Rectangle> grass2Rectangles = new List<Rectangle>();
         private List<Rectangle> cobblestoneRectangles = new List<Rectangle>();
+        private List<Rectangle> dirtRectangles = new List<Rectangle>();
+
 
         List<Mob> mobs;
 
@@ -47,11 +50,15 @@ namespace GurevichI_PASS2
         Texture2D skeletonTexture;
         Texture2D pillagerTexture;
         Texture2D endermanTexture;
+        Texture2D explodeTexture;
 
         private Vector2 skeletonPosition;
         private Vector2 creeperPosition;
         private Vector2 endermanPosition;
         private Vector2 pillagerPosition;
+
+        int arrowDamage = 1;
+        int creeperHp = 4;
 
         private int currentLevel = 1;
         private float elapsedSpawnTime = 0f;
@@ -87,33 +94,25 @@ namespace GurevichI_PASS2
 
         protected override void LoadContent()
         {
-            content = new ContentManager(Content.ServiceProvider, "Content"); // initialize the content manager
+            content = new ContentManager(Content.ServiceProvider, "content"); // initialize the content manager
             spriteBatch = new SpriteBatch(GraphicsDevice);
             graphicsDevice = GraphicsDevice;
 
             villagerTexture = Content.Load<Texture2D>("Sized/Villager_64");
             creeperTexture = Content.Load<Texture2D>("Sized/Creeper_64");
+            explodeTexture = Content.Load<Texture2D>("Sized/Explode_200");
             skeletonTexture = Content.Load<Texture2D>("Sized/Skeleton_64");
-            // pillagerTexture = Content.Load<Texture2D>("Sized/Pillager_64");
-            // endermanTexture = Content.Load<Texture2D>("Sized/Enderman_64");
+            pillagerTexture = Content.Load<Texture2D>("Sized/Pillager_64");
+            endermanTexture = Content.Load<Texture2D>("Sized/Enderman_64");
             playerTexture = Content.Load<Texture2D>("Sized/Steve_64");
-
-            player = new Player(playerTexture, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - playerTexture.Height), 3f);
-
-            villagerPosition = new Vector2(-villagerTexture.Width, random.Next(0, GraphicsDevice.Viewport.Height - villagerTexture.Height));
-            //  skeletonPosition = new Vector2(GraphicsDevice.Viewport.Width / 2 - skeletonTexture.Width / 2, -skeletonTexture.Height);
-
-
-            villagerSpeed = 100f;
-            creeperSpeed = 1.5f;
-            skeletonSpeed = 100f;
-
-
             arrowTexture = Content.Load<Texture2D>("Sized/ArrowUp");
-
             cobblestoneTexture = Content.Load<Texture2D>("Sized/CobbleStone_64");
             grass2Texture = Content.Load<Texture2D>("Sized/Grass2_64");
             grass1Texture = Content.Load<Texture2D>("Sized/Grass1_64");
+            dirtTexture = Content.Load<Texture2D>("Sized/Dirt_64");
+
+
+            player = new Player(playerTexture, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - playerTexture.Height), 3f);
 
             for (int x = 0; x < GraphicsDevice.Viewport.Width; x += grass2Texture.Width)
             {
@@ -137,13 +136,16 @@ namespace GurevichI_PASS2
 
         protected override void Update(GameTime gameTime)
         {
+
             KeyboardState keyboardState = Keyboard.GetState();
 
-            player.Update(keyboardState, (float)gameTime.ElapsedGameTime.TotalSeconds, GraphicsDevice.Viewport.Width);
+            player.Update(keyboardState, GraphicsDevice.Viewport.Width);
 
             if (keyboardState.IsKeyDown(Keys.Space) && fireRateTimer.Enabled == false)
             {
-                Arrow arrow = new Arrow(arrowTexture, player.Position, arrowSpeed);
+                // For example, if you want the arrow to deal 25 damage
+                var arrow = new Arrow(arrowTexture, player.Position, arrowSpeed, -1, 1);
+
                 arrows.Add(arrow);
 
                 fireRateTimer.Enabled = true;
@@ -180,15 +182,87 @@ namespace GurevichI_PASS2
                 elapsedSpawnTime = 0f;
             }
 
-
             for (int i = mobs.Count - 1; i >= 0; i--)
             {
                 mobs[i].Update(gameTime, player.Position, GraphicsDevice);
             }
+            // Check for collisions between player arrows and mobs
+            for (int i = arrows.Count - 1; i >= 0; i--)
+            {
+                for (int j = mobs.Count - 1; j >= 0; j--)
+                {
+                    // Check if the current mob is a Creeper
+                    if (mobs[j] is Creeper)
+                    {
+                        Creeper creeper = (Creeper)mobs[j];
+                        // Check for collision between the arrow and the Creeper
+                        if (arrows[i].BoundingBox.Intersects(creeper.BoundingBox))
+                        {
+                            // Handle the collision
+                            if (!creeper.Exploded)
+                            {
+                                // Subtract the arrow's damage from the Creeper's health
+                                creeper.Hp -= arrows[i]._damage;
+
+                                if (creeper.Hp <= 0)
+                                {
+
+                                    //Store the Death Position
+                                    creeper.DeathPosition = creeper.position;
+
+                                    // Creeper is dead, make it explode
+                                    creeper.Exploded = true;
+                                    mobs.RemoveAt(j);
+
+
+
+                                    // Get the explosion radius
+                                    int explosionRadius = 100;
+
+                                    for (int g1 = grass1Rectangles.Count - 1; g1 >= 0; g1--)
+                                    {
+                                        if (Vector2.Distance(creeper.DeathPosition, new Vector2(grass1Rectangles[g1].X, grass1Rectangles[g1].Y)) <= explosionRadius)
+                                        {
+                                            dirtRectangles.Add(new Rectangle(grass1Rectangles[g1].X, grass1Rectangles[g1].Y, dirtTexture.Width, dirtTexture.Height));
+                                            grass1Rectangles.RemoveAt(g1);
+                                        }
+                                    }
+
+                                    for (int g2 = grass2Rectangles.Count - 1; g2 >= 0; g2--)
+                                    {
+                                        if (Vector2.Distance(creeper.DeathPosition, new Vector2(grass2Rectangles[g2].X, grass2Rectangles[g2].Y)) <= explosionRadius)
+                                        {
+                                            dirtRectangles.Add(new Rectangle(grass2Rectangles[g2].X, grass2Rectangles[g2].Y, dirtTexture.Width, dirtTexture.Height));
+                                            grass2Rectangles.RemoveAt(g2);
+                                        }
+                                    }
+
+                                    for (int c = cobblestoneRectangles.Count - 1; c >= 0; c--)
+                                    {
+                                        if (Vector2.Distance(creeper.DeathPosition, new Vector2(cobblestoneRectangles[c].X, cobblestoneRectangles[c].Y)) <= explosionRadius)
+                                        {
+                                            dirtRectangles.Add(new Rectangle(cobblestoneRectangles[c].X, cobblestoneRectangles[c].Y, dirtTexture.Width, dirtTexture.Height));
+                                            cobblestoneRectangles.RemoveAt(c);
+                                        }
+                                    }
+
+                                }
+
+                                // Remove the arrow that collided with the Creeper
+                                arrows.RemoveAt(i);
+                                break;
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
 
             base.Update(gameTime);
         }
-
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -197,7 +271,9 @@ namespace GurevichI_PASS2
 
             foreach (Rectangle grass1Rect in grass1Rectangles)
             {
+
                 spriteBatch.Draw(grass1Texture, grass1Rect, Color.White);
+
             }
 
             foreach (Rectangle grass2Rect in grass2Rectangles)
@@ -208,6 +284,11 @@ namespace GurevichI_PASS2
             foreach (Rectangle cobblestoneRect in cobblestoneRectangles)
             {
                 spriteBatch.Draw(cobblestoneTexture, cobblestoneRect, Color.White);
+            }
+
+            foreach (Rectangle dirtRect in dirtRectangles)
+            {
+                spriteBatch.Draw(dirtTexture, dirtRect, Color.White);
             }
 
             player.Draw(spriteBatch);
@@ -270,39 +351,34 @@ namespace GurevichI_PASS2
             }
         }
 
-        private Mob CreateMobBasedOnLevel(int level, int randomValue, GraphicsDevice graphicsDevice)
+        private Mob CreateMobBasedOnLevel(int currentLevel, int randomValue, GraphicsDevice graphicsDevice)
         {
             Mob newMob = null;
 
             switch (currentLevel)
             {
                 case 1:
-                    /*  if (randomValue <= 70)
-                      {
-                          villagerPosition = new Vector2(-villagerTexture.Width, random.Next(0, GraphicsDevice.Viewport.Height - villagerTexture.Height));
-                          newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice);
-                      }
-                      else if (randomValue <= 90)
-                      {
-                          creeperPosition = new Vector2(25, 25);
-                          newMob = new Creeper(content, creeperTexture, creeperPosition, player.Position, creeperSpeed, graphicsDevice);
-                      }*/
                     if (randomValue <= 70)
                     {
-                        skeletonPosition = new Vector2(GraphicsDevice.Viewport.Width / 2 - skeletonTexture.Width / 2, -skeletonTexture.Height - 50);
-
+                        villagerSpeed = 100f;
+                        villagerPosition = new Vector2(-villagerTexture.Width, random.Next(0, GraphicsDevice.Viewport.Height - villagerTexture.Height));
+                        newMob = new Villager(content, villagerPosition, villagerSpeed, graphicsDevice);
+                    }
+                    else if (randomValue <= 90)
+                    {
+                        creeperSpeed = 1.5f;
+                        creeperPosition = new Vector2(random.Next(0, graphicsDevice.Viewport.Width - creeperTexture.Width), -creeperTexture.Height);
+                        newMob = new Creeper(content, creeperTexture, creeperPosition, player.Position, creeperSpeed, graphicsDevice, explodeTexture, creeperHp);
+                    }
+                    else
+                    {
+                        skeletonSpeed = 1.5f;
+                        skeletonPosition = new Vector2(graphicsDevice.Viewport.Width / 2 - skeletonTexture.Width / 2, -skeletonTexture.Height);
                         newMob = new Skeleton(content, skeletonTexture, skeletonPosition, skeletonSpeed, graphicsDevice);
                     }
                     break;
-
-                    // Add the other cases here
-
             }
             return newMob;
         }
-
-
-
     }
-
 }

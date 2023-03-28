@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Audio/Sounds/BowShoot.wav</SourceFile>
+  <SourceTime>2022-10-16T20:25:14-04:00</SourceTime>
+  <DestFile>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/bin/Debug/netcoreapp3.1/Audio/Sounds/BowShoot.xnb</DestFile>
+  <DestTime>2023-03-27T10:21:42.7645382-04:00</DestTime>
+  <Importer>WavImporter</Importer>
+  <ImporterTime>2018-12-08T11:35:14-05:00</ImporterTime>
+  <Processor>SoundEffectProcessor</Processor>
+  <ProcessorTime>2018-12-08T11:35:14-05:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "ivMPsTVcv5mbFYLTMwHuJiVSXcGLN0y5ej+B0HHc1Ts46oCND7kqs+3VrP2VCTOhWTgLFVPaAtlSxIAEI+OD7A==",
+  "success": true,
+  "projectFilePath": "/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/GurevichI_PASS2.csproj",
+  "expectedPackageFiles": [
+    "/Users/idang/.nuget/packages/monogame.framework.desktopgl/3.8.1.303/monogame.framework.desktopgl.3.8.1.303.nupkg.sha512",
+    "/Users/idang/.nuget/packages/ryan.monogame.framework.desktopgl/3.7.200/ryan.monogame.framework.desktopgl.3.7.200.nupkg.sha512"
+  ],
+  "logs": []
+}

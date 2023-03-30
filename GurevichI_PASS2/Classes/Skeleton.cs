@@ -23,7 +23,6 @@ namespace GurevichI_PASS2
         private bool finishedSpiral;
         private int rotationCount;
 
-        private int _hp;
 
         private List<Arrow> arrows;
         private Texture2D arrowTexture;
@@ -37,7 +36,7 @@ namespace GurevichI_PASS2
         private GraphicsDevice graphicsDevice;
 
         public Skeleton(ContentManager content, Texture2D Texture, Vector2 position, float speed, GraphicsDevice graphicsDevice, int hp)
-            : base(content.Load<Texture2D>("Sized/Skeleton_64"), position, 1, hp)
+            : base(content.Load<Texture2D>("Sized/Skeleton_64"), position, 2, 4)
         {
             center = new Vector2(position.X, position.Y + graphicsDevice.Viewport.Height / 2);
 
@@ -51,8 +50,6 @@ namespace GurevichI_PASS2
 
             this.position = position;
             this.graphicsDevice = graphicsDevice;
-
-            this._hp = hp;
 
             arrowTexture = content.Load<Texture2D>("Sized/ArrowDown");
 
@@ -97,7 +94,7 @@ namespace GurevichI_PASS2
             }
             else
             {
-                position.X += Speed * directionX * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                position.X += Speed * directionX;
 
                 if (position.X <= 0)
                 {

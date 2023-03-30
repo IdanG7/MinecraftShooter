@@ -6,12 +6,12 @@ namespace GurevichI_PASS2
 {
     public class Mob
     {
-        public Texture2D Texture { get; set; }
-        public Vector2 Position { get; set; }
-        public int Speed { get; set; }
-        public int Hp { get; set; }
-        public int PointValue { get; set; }
-        public bool IsDead { get; set; }
+        public Texture2D Texture;
+        public Vector2 Position;
+        public int Speed;
+        public int Hp;
+        public int PointValue;
+        public bool IsDead;
 
         public Mob(Texture2D texture, Vector2 position, int speed, int hp)
         {
@@ -36,7 +36,6 @@ namespace GurevichI_PASS2
         {
             get
             {
-
                 return new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
             }
         }

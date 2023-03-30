@@ -11,7 +11,7 @@ namespace GurevichI_PASS2
         public Texture2D Texture;
         public Vector2 Position;
 
-        private float speed = 3f;
+        public float speed = 3f;
         public Player(Texture2D texture, Vector2 position, float speed)
         {
             Texture = texture;

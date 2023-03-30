@@ -57,11 +57,6 @@ namespace GurevichI_PASS2
         private Vector2 endermanPosition;
         private Vector2 pillagerPosition;
 
-        int arrowDamage = 1;
-        int creeperHp = 4;
-        int villagerHp = 1;
-        int skeletonHp = 4;
-
         private int currentLevel = 1;
         private float elapsedSpawnTime = 0f;
 
@@ -70,8 +65,11 @@ namespace GurevichI_PASS2
         private float spawnTime;
 
         private float creeperSpeed;
-
         private float skeletonSpeed;
+
+        private int skeletonHp;
+        private int creeperHp;
+        private int villagerHp;
 
         private bool levelInitialized = false;
 
@@ -146,7 +144,7 @@ namespace GurevichI_PASS2
 
             if (keyboardState.IsKeyDown(Keys.Space) && fireRateTimer.Enabled == false)
             {
-                // For example, if you want the arrow to deal 25 damage
+
                 var arrow = new Arrow(arrowTexture, player.Position, arrowSpeed, -1, 1);
 
                 arrows.Add(arrow);
@@ -213,6 +211,11 @@ namespace GurevichI_PASS2
 
                                 if (creeper.Hp <= 0)
                                 {
+                                    // Store the Death Position
+                                    creeper.DeathPosition = creeper.position;
+
+                                    // Creeper is dead, make it explode
+                                    creeper.Exploded = true;
 
                                     //Store the Death Position
                                     creeper.DeathPosition = creeper.position;
@@ -259,10 +262,6 @@ namespace GurevichI_PASS2
                                 arrows.RemoveAt(i);
                                 break;
                             }
-                            else
-                            {
-
-                            }
                         }
                     }
                     else if (mobs[j] is Villager)
@@ -298,8 +297,25 @@ namespace GurevichI_PASS2
                 }
             }
 
+
+            for (int j = mobs.Count - 1; j >= 0; j--)
+            {
+                if (mobs[j] is Creeper creeper && creeper.ToRemove)
+                {
+                    mobs.RemoveAt(j);
+                }
+            }
+
+
+
+
+
+
+
+
             base.Update(gameTime);
         }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -399,19 +415,19 @@ namespace GurevichI_PASS2
                 case 1:
                     if (randomValue <= 70)
                     {
-                        villagerSpeed = 2f;
+
                         villagerPosition = new Vector2(-villagerTexture.Width, random.Next(0, GraphicsDevice.Viewport.Height - villagerTexture.Height));
                         newMob = new Villager(content, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
                     }
                     else if (randomValue <= 90)
                     {
-                        creeperSpeed = 10f;
+
                         creeperPosition = new Vector2(random.Next(0, graphicsDevice.Viewport.Width - creeperTexture.Width), -creeperTexture.Height);
                         newMob = new Creeper(content, creeperTexture, creeperPosition, player.Position, creeperSpeed, graphicsDevice, explodeTexture, creeperHp);
                     }
                     else
                     {
-                        skeletonSpeed = 10f;
+
                         skeletonPosition = new Vector2(graphicsDevice.Viewport.Width / 2 - skeletonTexture.Width / 2, -skeletonTexture.Height);
                         newMob = new Skeleton(content, skeletonTexture, skeletonPosition, skeletonSpeed, graphicsDevice, skeletonHp);
                     }

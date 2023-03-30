@@ -14,7 +14,7 @@ namespace GurevichI_PASS2
         public Texture2D explosionTexture;
         public Vector2 explosionPosition;
 
-        private int _hp;
+
 
         public bool Exploded;
         public bool ToRemove;
@@ -25,7 +25,7 @@ namespace GurevichI_PASS2
         private float explosionTimer = 0f;
 
         public Creeper(ContentManager content, Texture2D texture, Vector2 position, Vector2 playerPosition, float speed, GraphicsDevice graphicsDevice, Texture2D explosionTexture, int hp)
-    : base(texture, position, 1, hp)
+    : base(texture, position, 2, 3)
         {
             PointValue = 40;
             this.position = position;
@@ -33,7 +33,6 @@ namespace GurevichI_PASS2
             this.graphicsDevice = graphicsDevice;
             this.texture = content.Load<Texture2D>("Sized/Creeper_64");
             this.explosionTexture = explosionTexture;
-            this._hp = hp;
             explosionPosition = new Vector2(position.X, position.Y);
 
             Exploded = false;
@@ -67,10 +66,15 @@ namespace GurevichI_PASS2
                 if (position.Y + texture.Height >= graphicsDevice.Viewport.Height)
                 {
                     Exploded = true;
+                    DeathPosition = position;
                 }
             }
+
             else
             {
+                // Update the explosion position if the Creeper died from an arrow
+                explosionPosition = DeathPosition;
+
                 // Update the explosion timer
                 explosionTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -82,7 +86,7 @@ namespace GurevichI_PASS2
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (!Exploded)
             {
@@ -94,9 +98,5 @@ namespace GurevichI_PASS2
                 spriteBatch.Draw(explosionTexture, explosionPosition, Color.White);
             }
         }
-
-
-
-
     }
 }

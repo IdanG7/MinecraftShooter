@@ -36,7 +36,7 @@ namespace GurevichI_PASS2
         private GraphicsDevice graphicsDevice;
 
         public Skeleton(ContentManager content, Texture2D Texture, Vector2 position, float speed, GraphicsDevice graphicsDevice, int hp)
-            : base(content.Load<Texture2D>("Sized/Skeleton_64"), position, 2, 4)
+            : base(content.Load<Texture2D>("Sized/Skeleton_64"), position, (int)2f, 4)
         {
             // Update the center position
             center = new Vector2(graphicsDevice.Viewport.Width / 2, position.Y + graphicsDevice.Viewport.Height / 2);

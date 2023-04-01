@@ -102,9 +102,6 @@ namespace GurevichI_PASS2
 
             mobs = new List<Mob>();
 
-
-
-
             base.Initialize();
         }
 

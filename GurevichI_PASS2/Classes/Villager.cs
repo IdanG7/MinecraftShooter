@@ -12,7 +12,7 @@ namespace GurevichI_PASS2
         private Texture2D texture;
         private GraphicsDevice graphicsDevice;
 
-        public Villager(ContentManager content, Texture2D texture, Vector2 position, float speed, GraphicsDevice graphicsDevice, int hp) : base(texture, position, 3, 1)
+        public Villager(ContentManager content, Texture2D texture, Vector2 position, float speed, GraphicsDevice graphicsDevice, int hp) : base(texture, position, (int)4.5f, 1)
         {
             this.position = position;
             this.graphicsDevice = graphicsDevice;

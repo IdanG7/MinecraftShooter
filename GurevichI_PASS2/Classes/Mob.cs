@@ -8,7 +8,7 @@ namespace GurevichI_PASS2
     {
         public Texture2D Texture;
         public Vector2 Position;
-        public int Speed;
+        public float Speed;
         public int Hp;
         public int PointValue;
         public bool IsDead;

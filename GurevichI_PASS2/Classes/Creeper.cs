@@ -22,7 +22,7 @@ namespace GurevichI_PASS2
         private float explosionTimer = 0f;
 
         public Creeper(ContentManager content, Texture2D texture, Vector2 position, Vector2 playerPosition, float speed, GraphicsDevice graphicsDevice, Texture2D explosionTexture, int hp)
-            : base(texture, position, 2, 3)
+            : base(texture, position, (int)3f, 3)
         {
             PointValue = 40;
             this.position = position;

@@ -12,13 +12,14 @@ namespace GurevichI_PASS2
         public int _direction;
         public int _damage;
 
-        public Arrow(Texture2D arrowTexture, Vector2 position, float speed, int direction, int damage)
+        public Arrow(Texture2D arrowTexture, Vector2 position, float arrowSpeed, int direction, int damage)
         {
             _arrowTexture = arrowTexture;
             _position = position;
-            _speed = speed;
+            _speed = arrowSpeed;
             _direction = direction;
             _damage = damage;
+
         }
 
         public Rectangle BoundingBox

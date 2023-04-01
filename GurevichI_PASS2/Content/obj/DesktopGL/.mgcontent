@@ -4,6 +4,7 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/../../../../../../../Downloads/Nacho_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Audio/Music/Gameplay.mp3</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Audio/Music/Menu.mp3</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Audio/Music/Results.mp3</File>
@@ -16,6 +17,7 @@
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Audio/Sounds/Explode.wav</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Audio/Sounds/Purchase.wav</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Audio/Sounds/ShieldHit.wav</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Fonts/MinecraftMain.spritefont</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Raw/Alex.jpg</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Raw/ArrowDown.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Raw/ArrowUp.png</File>
@@ -76,6 +78,8 @@
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/MenuBG1.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/MenuBG2.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/MenuBG3.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/MinecraftBackground.jpg</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/Nacho_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/Pillager_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/Shield_48.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/ShopDamageBoost_150.png</File>
@@ -97,6 +101,10 @@
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/Content/Sized/Villager_64.png</File>
   </SourceFiles>
   <DestFiles>
+    <File>Sized/Nacho_64.png</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

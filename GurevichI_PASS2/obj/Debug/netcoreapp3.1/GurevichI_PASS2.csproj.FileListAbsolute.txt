@@ -23,3 +23,4 @@
 /Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/obj/Debug/netcoreapp3.1/GurevichI_PASS2.dll
 /Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/obj/Debug/netcoreapp3.1/GurevichI_PASS2.pdb
 /Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/obj/Debug/netcoreapp3.1/GurevichI_PASS2.genruntimeconfig.cache
+/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/bin/Debug/netcoreapp3.1/Helper.dll

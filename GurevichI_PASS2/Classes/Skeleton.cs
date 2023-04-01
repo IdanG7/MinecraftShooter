@@ -9,7 +9,7 @@ namespace GurevichI_PASS2
     public class Skeleton : Mob
     {
         private const float Tolerance = 0.5f;
-        private const float RotationSpeed = 0.025f;
+        private const float RotationSpeed = 0.015f;
         private const int SpiralRotations = 4;
 
         private int directionX;
@@ -17,12 +17,12 @@ namespace GurevichI_PASS2
         private Vector2 position;
 
         private Vector2 center;
-        private float angle;
-        private float radius;
+        private double angle;
+        private double radius;
         private bool reachedCenter;
         private bool finishedSpiral;
         private int rotationCount;
-
+        public bool ToRemove;
 
         private List<Arrow> arrows;
         private Texture2D arrowTexture;
@@ -38,10 +38,15 @@ namespace GurevichI_PASS2
         public Skeleton(ContentManager content, Texture2D Texture, Vector2 position, float speed, GraphicsDevice graphicsDevice, int hp)
             : base(content.Load<Texture2D>("Sized/Skeleton_64"), position, 2, 4)
         {
-            center = new Vector2(position.X, position.Y + graphicsDevice.Viewport.Height / 2);
+            // Update the center position
+            center = new Vector2(graphicsDevice.Viewport.Width / 2, position.Y + graphicsDevice.Viewport.Height / 2);
 
-            radius = Vector2.Distance(position, center) * 0.75f;
-            angle = (float)Math.Atan2(position.Y - center.Y, position.X - center.X);
+            // Set the starting position to the right side of the screen
+            position = new Vector2(graphicsDevice.Viewport.Width - Texture.Width * 2, position.Y);
+
+            radius = 100;
+            angle = Math.PI * 0.5;
+
             reachedCenter = false;
             finishedSpiral = false;
             rotationCount = 0;
@@ -67,6 +72,8 @@ namespace GurevichI_PASS2
 
         public override void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice)
         {
+            float maxRadius = Math.Min(center.X, graphicsDevice.Viewport.Height / 2) * 0.8f;
+
             if (!reachedCenter)
             {
                 position.Y += Speed;
@@ -75,22 +82,30 @@ namespace GurevichI_PASS2
                 {
                     reachedCenter = true;
                 }
+
+                float dx = position.X - center.X;
+                float dy = position.Y - center.Y;
+                angle = (float)Math.Atan2(dy, dx); // Calculate the initial angle based on the current position
+                radius = Math.Min((float)Math.Sqrt(dx * dx + dy * dy), maxRadius); // Calculate the initial radius based on the current position and limit it to maxRadius
             }
             else if (!finishedSpiral)
             {
-                angle += RotationSpeed;
-                position = center + radius * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                angle += 0.05;
+                radius -= maxRadius / (4 * (float)Math.PI / 0.05f); // Subtract a fixed amount from radius so it finishes in 4 spirals
 
-                if (angle >= MathHelper.TwoPi)
+                if (radius <= 0)
                 {
-                    angle -= MathHelper.TwoPi;
                     rotationCount++;
+                    radius = 0;
                 }
 
                 if (rotationCount >= SpiralRotations)
                 {
                     finishedSpiral = true;
                 }
+
+                position.X = center.X + (float)(radius * Math.Cos(angle)) - Texture.Width * 0.5f;
+                position.Y = center.Y + (float)(radius * Math.Sin(angle)) - Texture.Height * 0.5f;
             }
             else
             {
@@ -107,6 +122,7 @@ namespace GurevichI_PASS2
                     directionX = -1;
                 }
             }
+
 
             rateOfFireTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -129,7 +145,25 @@ namespace GurevichI_PASS2
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public bool HandleCollisionWithArrow(Arrow arrow)
+        {
+            if (arrow.BoundingBox.Intersects(BoundingBox) && !ToRemove)
+            {
+                // Handle the collision
+                Hp -= arrow._damage;
+
+                if (Hp <= 0)
+                {
+                    ToRemove = true;
+                }
+
+                return true; // Return true to indicate that a collision occurred and was handled
+            }
+
+            return false; // Return false to indicate no collision or handling
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
         {
             // Draw the skeleton
             spriteBatch.Draw(Texture, position, Color.White);
@@ -142,6 +176,4 @@ namespace GurevichI_PASS2
         }
     }
 }
-
-
 

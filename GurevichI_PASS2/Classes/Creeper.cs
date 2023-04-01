@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,25 +7,22 @@ namespace GurevichI_PASS2
 {
     public class Creeper : Mob
     {
-        public Texture2D texture;
-        public Vector2 position;
+        private Texture2D texture;
+        private Vector2 position;
         private Vector2 playerPosition;
         private GraphicsDevice graphicsDevice;
-        public Texture2D explosionTexture;
-        public Vector2 explosionPosition;
+        private Texture2D explosionTexture;
+        private Vector2 explosionPosition;
 
+        public bool Exploded { get; private set; }
+        public bool ToRemove { get; private set; }
+        private Vector2 DeathPosition;
 
-
-        public bool Exploded;
-        public bool ToRemove;
-        public Vector2 DeathPosition;
-
-
-        private float explosionDuration = 0.5f; // Duration of the explosion in seconds
+        private float explosionDuration = 0.5f;
         private float explosionTimer = 0f;
 
         public Creeper(ContentManager content, Texture2D texture, Vector2 position, Vector2 playerPosition, float speed, GraphicsDevice graphicsDevice, Texture2D explosionTexture, int hp)
-    : base(texture, position, 2, 3)
+            : base(texture, position, 2, 3)
         {
             PointValue = 40;
             this.position = position;
@@ -39,51 +36,80 @@ namespace GurevichI_PASS2
             ToRemove = false;
         }
 
-
-
-
-
-        public new Rectangle BoundingBox
-        {
-            get { return new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height); }
-        }
-
-
+        public new Rectangle BoundingBox => new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height);
 
         public override void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice)
         {
             if (!Exploded)
             {
-                // Calculate the direction vector towards the player
                 Vector2 direction = playerPosition - position;
                 direction.Normalize();
 
-                // Move the creeper towards the player at the given speed
                 position += direction * Speed;
                 explosionPosition = position;
 
-                // Check if the Creeper reached the bottom of the screen
                 if (position.Y + texture.Height >= graphicsDevice.Viewport.Height)
                 {
                     Exploded = true;
                     DeathPosition = position;
                 }
             }
-
             else
             {
-                // Update the explosion position if the Creeper died from an arrow
                 explosionPosition = DeathPosition;
-
-                // Update the explosion timer
                 explosionTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                // Check if the explosion duration has passed
                 if (explosionTimer >= explosionDuration)
                 {
                     ToRemove = true;
                 }
             }
+        }
+
+        public bool HandleCollisionWithArrow(Arrow arrow, GraphicsDevice graphicsDevice, List<Rectangle> grass1Rectangles, List<Rectangle> grass2Rectangles, List<Rectangle> cobblestoneRectangles, List<Rectangle> dirtRectangles, Texture2D dirtTexture)
+        {
+            if (arrow.BoundingBox.Intersects(BoundingBox) && !Exploded)
+            {
+                Hp -= arrow._damage;
+
+                if (Hp <= 0)
+                {
+                    DeathPosition = position;
+                    Exploded = true;
+
+                    int explosionRadius = 100;
+
+                    for (int g1 = grass1Rectangles.Count - 1; g1 >= 0; g1--)
+                    {
+                        if (Vector2.Distance(DeathPosition, new Vector2(grass1Rectangles[g1].X, grass1Rectangles[g1].Y)) <= explosionRadius)
+                        {
+                            dirtRectangles.Add(new Rectangle(grass1Rectangles[g1].X, grass1Rectangles[g1].Y, dirtTexture.Width, dirtTexture.Height));
+                            grass1Rectangles.RemoveAt(g1);
+                        }
+                    }
+
+                    for (int g2 = grass2Rectangles.Count - 1; g2 >= 0; g2--)
+                    {
+                        if (Vector2.Distance(DeathPosition, new Vector2(grass2Rectangles[g2].X, grass2Rectangles[g2].Y)) <= explosionRadius)
+                        {
+                            dirtRectangles.Add(new Rectangle(grass2Rectangles[g2].X, grass2Rectangles[g2].Y, dirtTexture.Width, dirtTexture.Height));
+                            grass2Rectangles.RemoveAt(g2);
+                        }
+                    }
+                    for (int c = cobblestoneRectangles.Count - 1; c >= 0; c--)
+                    {
+                        if (Vector2.Distance(DeathPosition, new Vector2(cobblestoneRectangles[c].X, cobblestoneRectangles[c].Y)) <= explosionRadius)
+                        {
+                            dirtRectangles.Add(new Rectangle(cobblestoneRectangles[c].X, cobblestoneRectangles[c].Y, dirtTexture.Width, dirtTexture.Height));
+                            cobblestoneRectangles.RemoveAt(c);
+                        }
+                    }
+                }
+
+                return true; // Return true to indicate that a collision occurred and was handled
+            }
+
+            return false; // Return false to indicate no collision or handling
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -100,3 +126,4 @@ namespace GurevichI_PASS2
         }
     }
 }
+

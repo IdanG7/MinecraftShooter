@@ -8,18 +8,17 @@ namespace GurevichI_PASS2
 {
     public class Player
     {
-        public Texture2D Texture;
+        public Texture2D texture;
         public Vector2 Position;
-
         public float speed = 3f;
         public Player(Texture2D texture, Vector2 position, float speed)
         {
-            Texture = texture;
+            this.texture = texture;
             Position = position;
             this.speed = speed;
         }
 
-        public void Update(KeyboardState keyboardState, int screenWidth)
+        public void Update(KeyboardState keyboardState, GraphicsDevice graphicsDevice)
         {
             Vector2 newPosition = Position;
 
@@ -32,14 +31,13 @@ namespace GurevichI_PASS2
                 newPosition.X += speed;
             }
 
-            newPosition.X = MathHelper.Clamp(newPosition.X, 0, screenWidth - Texture.Width);
+            newPosition.X = MathHelper.Clamp(newPosition.X, 0, graphicsDevice.Viewport.Width - texture.Width);
             Position = newPosition;
         }
 
-
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Position, Color.White);
+            spriteBatch.Draw(texture, Position, Color.White);
         }
     }
 }

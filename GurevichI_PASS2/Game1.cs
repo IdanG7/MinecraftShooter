@@ -34,7 +34,19 @@ namespace GurevichI_PASS2
 
 
         private Player player;
+        private Enderman enderman;
         private Level level;
+        // Add this in the Game1 class, along with the other variables
+
+        private int playerScore;
+        private int[] levelScores = new int[5];
+        private int currentLevel;
+        private int killsInCurrentLevel;
+        private int shotsFired;
+        private int shotsHit;
+        private double hitPercentage;
+
+
 
 
         List<Arrow> arrows;
@@ -54,7 +66,11 @@ namespace GurevichI_PASS2
         Vector2 button1Position;
         Vector2 button2Position;
         Vector2 button3Position;
-        Vector2 playerPosition;
+        Vector2 levelScoresPosition;
+        Vector2 statsPosition;
+        Vector2 scoreTextPosition;
+
+        public static Vector2 playerPosition;
 
         public Texture2D playerTexture;
         public Texture2D villagerTexture;
@@ -72,8 +88,10 @@ namespace GurevichI_PASS2
         public Texture2D menuTitle;
         public Texture2D arrowTexture;
         public Texture2D shieldTexture;
+        public Texture2D semiTransparentBackground;
 
         SpriteFont mainFont;
+        SpriteFont statsFont;
 
         float elapsedSpawnTime = 0f;
         int totalMobsInCurrentLevel;
@@ -82,8 +100,13 @@ namespace GurevichI_PASS2
         bool levelInitialized = false;
 
         float arrowSpeed = 5f;
+        bool isDisabled;
 
         Timer fireRateTimer;
+
+        private float resultsScreenDelay = 0f;
+        private float resultsScreenDelayDuration = 1f; // Duration in seconds
+
 
         public Game1()
         {
@@ -101,6 +124,8 @@ namespace GurevichI_PASS2
             fireRateTimer.Elapsed += (sender, args) => fireRateTimer.Enabled = false;
 
             mobs = new List<Mob>();
+
+            TargetElapsedTime = TimeSpan.FromTicks(10000000 / 60); // 60 FPS
 
             base.Initialize();
         }
@@ -122,7 +147,8 @@ namespace GurevichI_PASS2
             shieldTexture = content.Load<Texture2D>("Sized/Shield_48");
 
             // Load font
-            mainFont = content.Load<SpriteFont>("Fonts/MinecraftMain");
+            mainFont = content.Load<SpriteFont>("Fonts/MainFont");
+            statsFont = content.Load<SpriteFont>("Fonts/StatFont");
 
             // Load player-related assets
             playerTexture = content.Load<Texture2D>("Sized/Nacho_64");
@@ -150,9 +176,22 @@ namespace GurevichI_PASS2
             button2Rect = new Rectangle((int)button2Position.X, (int)button2Position.Y, button.Width, button.Height);
             button3Rect = new Rectangle((int)button3Position.X, (int)button3Position.Y, button.Width, button.Height);
 
+            // Variables for Results
+            semiTransparentBackground = new Texture2D(GraphicsDevice, 1, 1);
+            Color[] colorData = { Color.Black * 2f };
+            semiTransparentBackground.SetData(colorData);
+
+
+
+            levelScoresPosition = new Vector2(100, 170);
+            statsPosition = new Vector2(GraphicsDevice.Viewport.Width - 250, 170);
+
+            scoreTextPosition = new Vector2((GraphicsDevice.Viewport.Width / 2) - 125, 120);
+
+
             // Load background music
-            backgroundMusic = content.Load<Song>("Audio/Music/Gameplay");
-            menuMusic = content.Load<Song>("Audio/Music/Menu");
+            backgroundMusic = content.Load<Song>("Music/Gameplay");
+            menuMusic = content.Load<Song>("Music/Menu");
 
             // Generate grass and cobblestone
             for (int x = 0; x < GraphicsDevice.Viewport.Width; x += grass2Texture.Width)
@@ -205,9 +244,12 @@ namespace GurevichI_PASS2
                 case GAMEPLAY:
                     KeyboardState keyboardStateGame = Keyboard.GetState();
 
-                    player.Update(keyboardStateGame, graphicsDevice);
+                    player.Update(keyboardStateGame, graphicsDevice, gameTime);
 
                     level.UpdateLevel();
+
+
+
 
                     if (keyboardStateGame.IsKeyDown(Keys.Space) && fireRateTimer.Enabled == false)
                     {
@@ -215,9 +257,10 @@ namespace GurevichI_PASS2
                         var arrow = new Arrow(arrowTexture, player.Position, arrowSpeed, -1, 1);
 
                         arrows.Add(arrow);
-
                         fireRateTimer.Enabled = true;
+                        shotsFired++;
                     }
+
 
                     for (int i = arrows.Count - 1; i >= 0; i--)
                     {
@@ -272,18 +315,24 @@ namespace GurevichI_PASS2
                                 mobs.RemoveAt(j);
                             }
                         }
-                    }
-
-                    for (int i = mobs.Count - 1; i >= 0; i--)
-                    {
-                        if (mobs[i] is Pillager pillager)
+                        else if (mobs[j] is Pillager pillager)
                         {
                             if (pillager.offScreenTimer <= 0)
                             {
-                                mobs.RemoveAt(i);
+
+                                mobs.RemoveAt(j);
+                            }
+                        }
+                        else if (mobs[j] is Skeleton skeleton)
+                        {
+                            if (skeleton.offScreenTimer <= 0)
+                            {
+
+                                mobs.RemoveAt(j);
                             }
                         }
                     }
+
 
 
                     // Check for collisions between player arrows and mobs
@@ -294,24 +343,33 @@ namespace GurevichI_PASS2
                             if (mobs[j] is Creeper creeper && creeper.HandleCollisionWithArrow(arrows[i], GraphicsDevice, grass1Rectangles, grass2Rectangles, cobblestoneRectangles, dirtRectangles, dirtTexture))
                             {
                                 // Remove the arrow that collided with the Creeper
+                                shotsHit++;
                                 arrows.RemoveAt(i);
                                 break;
                             }
                             else if (mobs[j] is Villager villager && villager.HandleCollisionWithArrow(arrows[i]))
                             {
-                                mobs.RemoveAt(j);
                                 arrows.RemoveAt(i);
+                                shotsHit++;
                                 break;
                             }
 
                             else if (mobs[j] is Skeleton skeleton && skeleton.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
+                                shotsHit++;
                                 break;
                             }
                             else if (mobs[j] is Pillager pillager && pillager.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
+                                shotsHit++;
+                                break;
+                            }
+                            else if (mobs[j] is Enderman enderman && enderman.HandleCollisionWithArrow(arrows[i]))
+                            {
+                                arrows.RemoveAt(i);
+                                shotsHit++;
                                 break;
                             }
 
@@ -324,16 +382,77 @@ namespace GurevichI_PASS2
                         if (mobs[j] is Creeper creeper && creeper.ToRemove)
                         {
                             mobs.RemoveAt(j);
+
+                            if (creeper.Hp <= 0)
+                            {
+                                playerScore += 40;
+                                killsInCurrentLevel++;
+                            }
+                            else if (creeper.Exploded)
+                            {
+                                playerScore -= 40;
+                            }
                         }
                         else if (mobs[j] is Skeleton skeleton && skeleton.ToRemove)
                         {
                             mobs.RemoveAt(j);
+                            playerScore += 25;
+
+                            if (skeleton.Hp <= 0)
+                            {
+                                killsInCurrentLevel++;
+                            }
                         }
                         else if (mobs[j] is Pillager pillager && pillager.ToRemove)
                         {
                             mobs.RemoveAt(j);
+                            playerScore += 25;
+
+                            if (pillager.Hp <= 0)
+                            {
+                                killsInCurrentLevel++;
+                            }
+
+                        }
+                        else if (mobs[j] is Enderman enderman && enderman.ToRemove)
+                        {
+                            mobs.RemoveAt(j);
+
+                            if (enderman.Hp <= 0)
+                            {
+                                playerScore += 100;
+                                killsInCurrentLevel++;
+
+                            }
+                        }
+                        else if (mobs[j] is Villager villager && villager.ToRemove)
+                        {
+                            mobs.RemoveAt(j);
+                            playerScore += 10;
+
+                            if (villager.Hp <= 0)
+                            {
+                                killsInCurrentLevel++;
+
+                            }
                         }
                     }
+
+                    if (totalMobsInCurrentLevel == 0 && mobs.Count == 0)
+                    {
+                        resultsScreenDelay += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                        if (resultsScreenDelay >= resultsScreenDelayDuration)
+                        {
+                            currentGameState = RESULTS;
+                            resultsScreenDelay = 0f; // Reset the delay for the next time
+                        }
+                    }
+                    else
+                    {
+                        resultsScreenDelay = 0f; // Reset the delay if the level is not complete
+                    }
+
 
                     if (currentGameState == GAMEPLAY)
                     {
@@ -354,7 +473,24 @@ namespace GurevichI_PASS2
                     // Update logic for STATS state
                     break;
                 case RESULTS:
-                    // Update logic for RESULTS state
+                    KeyboardState keyboardStateResults = Keyboard.GetState();
+
+                    currentLevel = level.currentLevel;
+                    levelScores[currentLevel - 1] = playerScore;
+                    hitPercentage = shotsFired > 0 ? (double)shotsHit / shotsFired * 100 : 0;
+
+                    // Check for user input to proceed to the next level
+                    if (keyboardStateResults.IsKeyDown(Keys.Enter))
+                    {
+                        // Reset variables for the next level
+                        killsInCurrentLevel = 0;
+                        shotsFired = 0;
+                        shotsHit = 0;
+
+                        StartNextLevel();
+                        currentGameState = GAMEPLAY;
+                    }
+
                     break;
                 case SHOP:
                     // Update logic for SHOP state
@@ -381,7 +517,7 @@ namespace GurevichI_PASS2
                     Vector2 buttonOrigin = new Vector2(button.Width / 2, button.Height / 2);
 
                     spriteBatch.Draw(button, button1Position + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(mainFont, "PLAY GAME", button1Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("PLAY GAME") * 2.5f / 2, Color.Black, 0, Vector2.Zero, 2.5f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(mainFont, "PLAY GAME", button1Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("PLAY GAME") / 2, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
                     spriteBatch.Draw(button, button2Position + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
                     spriteBatch.Draw(button, button3Position + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
@@ -446,8 +582,18 @@ namespace GurevichI_PASS2
                         pillager.Draw(spriteBatch, content);
                     }
 
-                    spriteBatch.End();
+                    foreach (Enderman enderman in mobs.OfType<Enderman>())
+                    {
+                        enderman.Draw(spriteBatch);
+                    }
 
+                    string scoreTextGame = "Score: " + playerScore.ToString();
+                    Vector2 scoreTextPositionGame = new Vector2(25, 25);
+
+                    spriteBatch.DrawString(statsFont, scoreTextGame, scoreTextPositionGame, Color.White);
+
+
+                    spriteBatch.End();
                     break;
                 case STATS:
                     // Draw logic for STATS state
@@ -456,8 +602,55 @@ namespace GurevichI_PASS2
                     // Draw logic for INSTRUCTIONS state
                     break;
                 case RESULTS:
-                    // Draw logic for RESULTS state
+
+
+                    spriteBatch.Begin();
+
+                    int boxWidth = (int)(GraphicsDevice.Viewport.Width * 1);
+                    int boxHeight = (int)(GraphicsDevice.Viewport.Height * 0.6);
+                    int boxX = (GraphicsDevice.Viewport.Width - boxWidth) / 2;
+                    int boxY = (GraphicsDevice.Viewport.Height - boxHeight) / 2;
+
+                    spriteBatch.Draw(semiTransparentBackground, new Rectangle(boxX, boxY, boxWidth, boxHeight), Color.White);
+
+                    // Draw score on top
+                    string scoreText = "SCORE: " + playerScore.ToString();
+                    spriteBatch.DrawString(mainFont, scoreText, scoreTextPosition, Color.Yellow, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+
+                    // Draw level scores on the left side
+                    Vector2 tempLevelScoresPosition = levelScoresPosition;
+                    for (int i = 0; i < levelScores.Length; i++)
+                    {
+                        string levelScoreText = $"Level {i + 1}: {levelScores[i]}";
+                        spriteBatch.DrawString(statsFont, levelScoreText, tempLevelScoresPosition, Color.White);
+                        tempLevelScoresPosition.Y += statsFont.LineSpacing;
+                    }
+
+                    // Draw Level, Kills, ShotsFired, ShotsHit, and Hit% on the right side
+                    Vector2 tempStatsPosition = statsPosition;
+                    string levelText = "Level: " + currentLevel;
+                    spriteBatch.DrawString(statsFont, levelText, tempStatsPosition, Color.White);
+
+                    tempStatsPosition.Y += statsFont.LineSpacing;
+                    string killsText = "Kills: " + killsInCurrentLevel;
+                    spriteBatch.DrawString(statsFont, killsText, tempStatsPosition, Color.White);
+
+                    tempStatsPosition.Y += statsFont.LineSpacing;
+                    string shotsFiredText = "Shots Fired: " + shotsFired;
+                    spriteBatch.DrawString(statsFont, shotsFiredText, tempStatsPosition, Color.White);
+
+                    tempStatsPosition.Y += statsFont.LineSpacing;
+                    string shotsHitText = "Shots Hit: " + shotsHit;
+                    spriteBatch.DrawString(statsFont, shotsHitText, tempStatsPosition, Color.White);
+
+                    tempStatsPosition.Y += statsFont.LineSpacing;
+                    string hitPercentageText = "Hit%: " + hitPercentage.ToString("0.00") + "%";
+                    spriteBatch.DrawString(statsFont, hitPercentageText, tempStatsPosition, Color.White);
+
+                    spriteBatch.End();
+
                     break;
+
                 case SHOP:
                     // Draw logic for SHOP state
                     break;
@@ -465,6 +658,14 @@ namespace GurevichI_PASS2
 
             base.Draw(gameTime);
         }
+
+        private void StartNextLevel()
+        {
+            level.currentLevel++;
+            levelInitialized = false;
+        }
+
+
 
     }
 }

@@ -147,11 +147,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/GurevichI_PASS2.csproj",
+      "projectUniqueName": "/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/GurevichI_PASS2.csproj",
       "projectName": "GurevichI_PASS2",
-      "projectPath": "/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/GurevichI_PASS2.csproj",
+      "projectPath": "/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/GurevichI_PASS2.csproj",
       "packagesPath": "/Users/idang/.nuget/packages/",
-      "outputPath": "/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2/GurevichI_PASS2/obj/",
+      "outputPath": "/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/idang/.config/NuGet/NuGet.Config"

@@ -11,15 +11,25 @@ namespace GurevichI_PASS2
         public Texture2D texture;
         public Vector2 Position;
         public float speed = 3f;
+        public float fearTimer;
+        public const float FearDuration = 0.5f;
+
         public Player(Texture2D texture, Vector2 position, float speed)
         {
             this.texture = texture;
             Position = position;
             this.speed = speed;
+            fearTimer = 0f;
         }
 
-        public void Update(KeyboardState keyboardState, GraphicsDevice graphicsDevice)
+        public void Update(KeyboardState keyboardState, GraphicsDevice graphicsDevice, GameTime gameTime)
         {
+            if (fearTimer > 0)
+            {
+                fearTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                return;
+            }
+
             Vector2 newPosition = Position;
 
             if (keyboardState.IsKeyDown(Keys.Left))
@@ -39,7 +49,12 @@ namespace GurevichI_PASS2
         {
             spriteBatch.Draw(texture, Position, Color.White);
         }
+
+        public bool InduceFear()
+        {
+            fearTimer = FearDuration;
+            return true;
+
+        }
     }
 }
-
-

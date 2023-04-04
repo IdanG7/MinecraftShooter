@@ -9,7 +9,8 @@
       "GurevichI_PASS2/1.0.0": {
         "dependencies": {
           "MonoGame.Framework.DesktopGL": "3.8.1.303",
-          "Ryan.MonoGame.Framework.DesktopGL": "3.7.200"
+          "Ryan.MonoGame.Framework.DesktopGL": "3.7.200",
+          "Helper": "1.0.0.0"
         },
         "runtime": {
           "GurevichI_PASS2.dll": {}
@@ -73,6 +74,14 @@
             "fileVersion": "0.0.0.0"
           }
         }
+      },
+      "Helper/1.0.0.0": {
+        "runtime": {
+          "Helper.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -95,6 +104,11 @@
       "sha512": "sha512-KM3rnwkwUR3d+IVd4aKpRl4Kjxpoe/vSDMpsTgYtu6MgHQdn9cRG6C3NIjHAMS0EtSllxMr4CC4hpwOmHnV1tQ==",
       "path": "ryan.monogame.framework.desktopgl/3.7.200",
       "hashPath": "ryan.monogame.framework.desktopgl.3.7.200.nupkg.sha512"
+    },
+    "Helper/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

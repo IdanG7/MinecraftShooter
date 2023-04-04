@@ -20,6 +20,7 @@ namespace GurevichI_PASS2
             _direction = direction;
             _damage = damage;
 
+
         }
 
         public Rectangle BoundingBox

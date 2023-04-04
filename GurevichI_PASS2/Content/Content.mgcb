@@ -1,8 +1,8 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:../bin/Debug/netcoreapp3.1
-/intermediateDir:obj/$(Platform)
+/outputDir:../bin/Debug/netcoreapp3.1/Content
+/intermediateDir:../Content
 /platform:DesktopGL
 /config:
 /profile:Reach
@@ -25,84 +25,43 @@
 /processorParam:TextureFormat=Color
 /build:../../../../../../../Downloads/Nacho_64.png;Sized/Nacho_64.png
 
-#begin Audio/Music/Gameplay.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Audio/Music/Gameplay.mp3
-
-#begin Audio/Music/Menu.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Audio/Music/Menu.mp3
-
-#begin Audio/Music/Results.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Audio/Music/Results.mp3
-
-#begin Audio/Music/Shop.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Audio/Music/Shop.mp3
-
-#begin Audio/Sounds/ArrowImpact.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/ArrowImpact.wav
-
-#begin Audio/Sounds/BowShoot.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/BowShoot.wav
-
-#begin Audio/Sounds/ButtonClick.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/ButtonClick.wav
-
-#begin Audio/Sounds/EndermanScream.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/EndermanScream.wav
-
-#begin Audio/Sounds/EndermanTeleport.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/EndermanTeleport.wav
-
-#begin Audio/Sounds/Explode.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/Explode.wav
-
-#begin Audio/Sounds/Purchase.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/Purchase.wav
-
-#begin Audio/Sounds/ShieldHit.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/Sounds/ShieldHit.wav
-
-#begin Fonts/MinecraftMain.spritefont
+#begin Fonts/MainFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Fonts/MinecraftMain.spritefont
+/build:Fonts/MainFont.spritefont
+
+#begin Fonts/StatFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/StatFont.spritefont
+
+#begin Music/Gameplay.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Gameplay.mp3
+
+#begin Music/Menu.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Menu.mp3
+
+#begin Music/Results.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Results.mp3
+
+#begin Music/Shop.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Shop.mp3
 
 #begin Raw/Alex.jpg
 /importer:TextureImporter
@@ -824,30 +783,6 @@
 /processorParam:TextureFormat=Color
 /build:Sized/MenuBG3.png
 
-#begin Sized/MinecraftBackground.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Sized/MinecraftBackground.jpg
-
-#begin Sized/Nacho_64.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Sized/Nacho_64.png
-
 #begin Sized/Pillager_64.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1075,4 +1010,52 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sized/Villager_64.png
+
+#begin Sounds/ArrowImpact.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/ArrowImpact.wav
+
+#begin Sounds/BowShoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/BowShoot.wav
+
+#begin Sounds/ButtonClick.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/ButtonClick.wav
+
+#begin Sounds/EndermanScream.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/EndermanScream.wav
+
+#begin Sounds/EndermanTeleport.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/EndermanTeleport.wav
+
+#begin Sounds/Explode.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Explode.wav
+
+#begin Sounds/Purchase.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Purchase.wav
+
+#begin Sounds/ShieldHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/ShieldHit.wav
 

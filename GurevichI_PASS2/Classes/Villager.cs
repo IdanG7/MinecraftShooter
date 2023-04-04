@@ -18,6 +18,8 @@ namespace GurevichI_PASS2
             this.graphicsDevice = graphicsDevice;
             this.texture = content.Load<Texture2D>("Sized/Villager_64");
             offScreenTimer = 5f;
+
+
         }
 
         // Get the bounding box of the Villager
@@ -51,6 +53,7 @@ namespace GurevichI_PASS2
                 Hp -= arrow._damage;
                 if (Hp <= 0)
                 {
+                    ToRemove = true;
                     return true;
                 }
             }

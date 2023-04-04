@@ -7,7 +7,7 @@ namespace GurevichI_PASS2
 {
     public class Level
     {
-        public int currentLevel = 4;
+        public int currentLevel = 1;
 
         public float SpawnTime { get { return spawnTime; } }
         public int MaxMobsOnScreen { get { return maxMobsOnScreen; } }
@@ -26,6 +26,7 @@ namespace GurevichI_PASS2
         private Texture2D creeperTexture;
         private Texture2D skeletonTexture;
         private Texture2D pillagerTexture;
+        private Texture2D endermanTexture;
         private Texture2D explodeTexture;
 
         // Add positions
@@ -33,17 +34,20 @@ namespace GurevichI_PASS2
         private Vector2 creeperPosition;
         private Vector2 skeletonPosition;
         private Vector2 pillagerPosition;
+        private Vector2 endermanPosition;
 
         // Add speed values
         private float villagerSpeed;
         private float creeperSpeed;
         private float skeletonSpeed;
+        private float endermanSpeed;
 
         // Add health values
         private int villagerHp;
         private int creeperHp;
         private int skeletonHp;
         private int pillagerHp;
+        private int endermanHp;
 
         public Level(ContentManager content, GraphicsDevice graphicsDevice, Player player)
         {
@@ -56,6 +60,7 @@ namespace GurevichI_PASS2
             creeperTexture = content.Load<Texture2D>("Sized/Creeper_64");
             skeletonTexture = content.Load<Texture2D>("Sized/Skeleton_64");
             pillagerTexture = content.Load<Texture2D>("Sized/Pillager_64");
+            endermanTexture = content.Load<Texture2D>("SIzed/Enderman_64");
             explodeTexture = content.Load<Texture2D>("Sized/Explode_200");
 
 
@@ -114,7 +119,7 @@ namespace GurevichI_PASS2
                     if (randomValue <= 70)
                     {
 
-                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height));
+                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height - player.texture.Height));
                         newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
                     }
                     else if (randomValue <= 90)
@@ -168,7 +173,6 @@ namespace GurevichI_PASS2
                     else
                     {
                         pillagerPosition = new Vector2(-pillagerTexture.Width, Game1.random.Next(graphicsDevice.Viewport.Height));
-
                         newMob = new Pillager(content, pillagerTexture, villagerPosition, villagerSpeed, graphicsDevice, pillagerHp);
                     }
                     break;
@@ -196,7 +200,8 @@ namespace GurevichI_PASS2
                     }
                     else
                     {
-                        // Create Enderman
+                        endermanPosition = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - endermanTexture.Width), 0);
+                        newMob = new Enderman(content, endermanTexture, endermanPosition, graphicsDevice, endermanHp, player);
                     }
                     break;
 
@@ -226,6 +231,8 @@ namespace GurevichI_PASS2
                     }
                     else
                     {
+                        endermanPosition = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - endermanTexture.Width), 0);
+                        newMob = new Enderman(content, endermanTexture, endermanPosition, graphicsDevice, endermanHp, player);
                     }
                     break;
             }

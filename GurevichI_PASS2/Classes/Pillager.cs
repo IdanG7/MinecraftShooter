@@ -25,8 +25,7 @@ namespace GurevichI_PASS2
             baseline = Game1.random.Next(SIN_AMP, graphicsDevice.Viewport.Height - SIN_AMP - rec.Height * 2);
             position.Y = baseline;
 
-
-
+            // Spawn the Pillager offscreen to the left or right based on the random condition
             if (Game1.random.Next(0, 100) < 50)
             {
                 position.X = -rec.Width;
@@ -39,16 +38,7 @@ namespace GurevichI_PASS2
             rec.X = (int)position.X;
             rec.Y = (int)position.Y;
 
-
-            offScreenTimer = 10;
-        }
-
-        public new Rectangle BoundingBox
-        {
-            get
-            {
-                return new Rectangle((int)position.X, (int)position.Y, Texture.Width, Texture.Height);
-            }
+            offScreenTimer = 1;
         }
 
         public override void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice)
@@ -57,14 +47,14 @@ namespace GurevichI_PASS2
             position.X += Speed;
             position.Y = baseline + (int)(SIN_AMP * Math.Sin(0.03 * position.X));
 
-
-            if (Position.X < 0 || Position.X > graphicsDevice.Viewport.Width || Position.Y < 0 || Position.Y > graphicsDevice.Viewport.Height)
+            // Update offScreenTimer
+            if (position.X < 0 || position.X > graphicsDevice.Viewport.Width || position.Y < 0 || position.Y > graphicsDevice.Viewport.Height)
             {
                 offScreenTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             else
             {
-                offScreenTimer = 5f; // Reset the timer if the villager is on the screen
+                offScreenTimer = 1; // Reset the timer if the Pillager is on the screen
             }
         }
 
@@ -89,6 +79,14 @@ namespace GurevichI_PASS2
             }
 
             return false;
+        }
+
+        public new Rectangle BoundingBox
+        {
+            get
+            {
+                return new Rectangle((int)position.X, (int)position.Y, Texture.Width, Texture.Height);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, ContentManager Content)

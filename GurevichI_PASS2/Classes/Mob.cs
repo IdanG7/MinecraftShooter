@@ -11,6 +11,7 @@ namespace GurevichI_PASS2
         public float Speed;
         public int Hp;
         public int PointValue;
+        public bool ToRemove { get; set; }
         public bool IsDead;
         private protected Rectangle rec;
 

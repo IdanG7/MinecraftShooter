@@ -1,25 +1,30 @@
 ﻿<Properties StartupConfiguration="{64787EB1-7064-41AA-9947-56E1514BDBA1}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="GurevichI_PASS2/Classes/Enderman.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="GurevichI_PASS2/Content/Fonts/MainFont.spritefont">
     <Files>
-      <File FileName="GurevichI_PASS2/Game1.cs" Line="350" Column="25" />
-      <File FileName="GurevichI_PASS2/Classes/Arrow.cs" Line="9" Column="20" />
-      <File FileName="GurevichI_PASS2/Classes/Villager.cs" Line="11" Column="34" />
-      <File FileName="GurevichI_PASS2/Classes/Creeper.cs" Line="18" Column="51" />
-      <File FileName="GurevichI_PASS2/Classes/Skeleton.cs" Line="89" Column="111" />
-      <File FileName="GurevichI_PASS2/Classes/Pillager.cs" Line="23" Column="1" />
-      <File FileName="GurevichI_PASS2/Classes/Mob.cs" Line="31" Column="37" />
-      <File FileName="GurevichI_PASS2/Classes/Player.cs" Line="15" Column="10" />
-      <File FileName="GurevichI_PASS2/Classes/Level.cs" Line="39" Column="7" />
-      <File FileName="GurevichI_PASS2/Program.cs" Line="11" Column="1" />
-      <File FileName="GurevichI_PASS2/Classes/Enderman.cs" Line="1" Column="1" />
+      <File FileName="GurevichI_PASS2/Game1.cs" Line="547" Column="53" IsPinned="True" />
+      <File FileName="GurevichI_PASS2/Classes/Enderman.cs" IsPinned="True" />
+      <File FileName="GurevichI_PASS2/Classes/Pillager.cs" />
+      <File FileName="GurevichI_PASS2/Classes/Arrow.cs" />
+      <File FileName="GurevichI_PASS2/Classes/Skeleton.cs" />
+      <File FileName="GurevichI_PASS2/Classes/Mob.cs" />
+      <File FileName="GurevichI_PASS2/Classes/Player.cs" />
+      <File FileName="GurevichI_PASS2/Classes/Level.cs" />
+      <File FileName="GurevichI_PASS2/Program.cs" />
+      <File FileName="GurevichI_PASS2/Classes/Creeper.cs" />
+      <File FileName="GurevichI_PASS2/Classes/Villager.cs" />
+      <File FileName="GurevichI_PASS2/Content/Fonts/StatFont.spritefont" Line="20" Column="13" />
+      <File FileName="GurevichI_PASS2/Content/Fonts/MainFont.mgcontent" Line="1" Column="1" />
+      <File FileName="GurevichI_PASS2/Content/Fonts/MainFont.spritefont" Line="20" Column="13" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="GurevichI_PASS2" expanded="True">
             <Node name="GurevichI_PASS2" expanded="True">
-              <Node name="Classes" expanded="True">
-                <Node name="Enderman.cs" selected="True" />
+              <Node name="Content" expanded="True">
+                <Node name="Fonts" expanded="True">
+                  <Node name="MainFont.spritefont" selected="True" />
+                </Node>
               </Node>
             </Node>
           </Node>

@@ -8,9 +8,13 @@ namespace GurevichI_PASS2
 {
     public class Skeleton : Mob
     {
-        private const float Tolerance = 0.5f;
+        private const float Tolerance = 0f;
         private const float RotationSpeed = 0.015f;
         private const int SpiralRotations = 4;
+
+        private const int ArrowDamage = 1;
+        private const float ArrowSpeed = 5f;
+        private const float RateOfFireCooldown = 1.5f;
 
         private int directionX;
 
@@ -23,15 +27,13 @@ namespace GurevichI_PASS2
         private bool finishedSpiral;
         private int rotationCount;
         public bool ToRemove;
+        public float offScreenTimer;
+
 
         private List<Arrow> arrows;
         private Texture2D arrowTexture;
 
-        int arrowDamage = 1;
-
         private float rateOfFireTimer;
-
-        private float arrowSpeed = 5f;
 
         private GraphicsDevice graphicsDevice;
 
@@ -39,13 +41,12 @@ namespace GurevichI_PASS2
             : base(content.Load<Texture2D>("Sized/Skeleton_64"), position, (int)2f, 4)
         {
             // Update the center position
-            center = new Vector2(graphicsDevice.Viewport.Width / 2, position.Y + graphicsDevice.Viewport.Height / 2);
+
+            center = new Vector2(graphicsDevice.Viewport.Width / 2, graphicsDevice.Viewport.Height / 2);
 
             // Set the starting position to the right side of the screen
-            position = new Vector2(graphicsDevice.Viewport.Width - Texture.Width * 2, position.Y);
+            position = new Vector2(graphicsDevice.Viewport.Width - 150 - Texture.Width * 2, position.Y);
 
-            radius = 100;
-            angle = Math.PI * 0.5;
 
             reachedCenter = false;
             finishedSpiral = false;
@@ -55,6 +56,8 @@ namespace GurevichI_PASS2
 
             this.position = position;
             this.graphicsDevice = graphicsDevice;
+
+            offScreenTimer = 1;
 
             arrowTexture = content.Load<Texture2D>("Sized/ArrowDown");
 
@@ -72,7 +75,7 @@ namespace GurevichI_PASS2
 
         public override void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice)
         {
-            float maxRadius = Math.Min(center.X, graphicsDevice.Viewport.Height / 2) * 0.8f;
+            float maxRadius = Math.Max(center.X, graphicsDevice.Viewport.Height / 2);
 
             if (!reachedCenter)
             {
@@ -83,15 +86,14 @@ namespace GurevichI_PASS2
                     reachedCenter = true;
                 }
 
-                float dx = position.X - center.X;
-                float dy = position.Y - center.Y;
-                angle = (float)Math.Atan2(dy, dx); // Calculate the initial angle based on the current position
-                radius = Math.Min((float)Math.Sqrt(dx * dx + dy * dy), maxRadius); // Calculate the initial radius based on the current position and limit it to maxRadius
+
+                angle = 0;
+                radius = 150;
             }
             else if (!finishedSpiral)
             {
                 angle += 0.05;
-                radius -= maxRadius / (4 * (float)Math.PI / 0.05f); // Subtract a fixed amount from radius so it finishes in 4 spirals
+                radius -= 0.35;
 
                 if (radius <= 0)
                 {
@@ -110,26 +112,29 @@ namespace GurevichI_PASS2
             else
             {
                 position.X += Speed * directionX;
-
                 if (position.X <= 0)
                 {
                     position.X = 0;
                     directionX = 1;
                 }
-                else if (position.X + Texture.Width >= graphicsDevice.Viewport.Width)
+                // Update offScreenTimer
+                if (position.X < 0 || position.X > graphicsDevice.Viewport.Width || position.Y < 0 || position.Y > graphicsDevice.Viewport.Height)
                 {
-                    position.X = graphicsDevice.Viewport.Width - Texture.Width;
-                    directionX = -1;
+                    offScreenTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else
+                {
+                    offScreenTimer = 1; // Reset the timer if the Pillager is on the screen
                 }
             }
 
 
             rateOfFireTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (rateOfFireTimer >= 1.5f)
+            if (rateOfFireTimer >= RateOfFireCooldown)
             {
                 Vector2 arrowPosition = new Vector2(position.X + Texture.Width / 2, position.Y);
-                Arrow arrow = new Arrow(arrowTexture, position, arrowSpeed, 1, arrowDamage);
+                Arrow arrow = new Arrow(arrowTexture, position, ArrowSpeed, 1, ArrowDamage);
 
                 arrows.Add(arrow);
                 rateOfFireTimer = 0;
@@ -176,4 +181,3 @@ namespace GurevichI_PASS2
         }
     }
 }
-

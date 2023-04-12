@@ -1,0 +1,14 @@
+High Score: 0
+Games Played: 0
+Shots Fired: 0
+Shots Hit: 0
+Top Hit % for one game: 0
+Total Villagers Killed: 0
+Total Creepers Killed: 0
+Total Skeletons Killed: 0
+Total Pillagers Killed: 0
+Total Endermen Killed: 0
+Total Kills: 0
+All-Time Hit %: 0
+Average Shots per Game: 0
+Average Kills per Game: 0

@@ -7,7 +7,7 @@ namespace GurevichI_PASS2
 {
     public class Level
     {
-        public int currentLevel = 1;
+        public int currentLevel = 5;
 
         public float SpawnTime { get { return spawnTime; } }
         public int MaxMobsOnScreen { get { return maxMobsOnScreen; } }
@@ -102,7 +102,7 @@ namespace GurevichI_PASS2
                     spawnTime = 1.2f;
                     break;
                 case 5:
-                    totalMobsInCurrentLevel = 30;
+                    totalMobsInCurrentLevel = 3;
                     maxMobsOnScreen = 3;
                     spawnTime = 1f;
                     break;

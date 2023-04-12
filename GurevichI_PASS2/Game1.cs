@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Timers;
 using Microsoft.Xna.Framework;
@@ -40,12 +41,15 @@ namespace GurevichI_PASS2
 
         int arrowDamage;
 
-        private int playerScore = 500;
+        private int playerScore = 0;
         private int[] levelScores = new int[5];
         private int currentLevel;
         private int killsInCurrentLevel;
         private int shotsFired;
+        private int shotsFiredInRound;
         private int shotsHit;
+        private int shotsHitInRound;
+
 
         double hitPercentage;
         string scoreTextGame;
@@ -56,11 +60,25 @@ namespace GurevichI_PASS2
         string moveInstructions;
         string shootInstructions;
         string goalInstructions;
+        string statsFilename = "Statistics";
 
         List<Arrow> arrows;
         List<Mob> mobs;
         List<Vector2> iconPositions = new List<Vector2>();
 
+        int highScore;
+        int gamesPlayed;
+        float topHitPercentage;
+        int totalVillagersKilled;
+        int totalCreepersKilled;
+        int totalSkeletonsKilled;
+        int totalPillagersKilled;
+        int totalEndermenKilled;
+
+        int totalKills;
+        float allTimeHitPercentage;
+        float avgShotsPerGame;
+        float avgKillsPerGame;
 
         List<Rectangle> grass1Rectangles = new List<Rectangle>();
         List<Rectangle> grass2Rectangles = new List<Rectangle>();
@@ -116,6 +134,7 @@ namespace GurevichI_PASS2
         Texture2D button;
         Texture2D menuTitle;
         Texture2D shopTitle;
+        Texture2D statsTitle;
         Texture2D arrowTexture;
         Texture2D semiTransparentBackground;
         Texture2D traderTexture;
@@ -141,6 +160,8 @@ namespace GurevichI_PASS2
         bool damageBuffActive = false;
         bool rateOfFireBuffActive = false;
         bool pointsBuffActive = false;
+        bool statsUpdated = false;
+
 
 
         private bool showPopup = false;
@@ -254,6 +275,7 @@ namespace GurevichI_PASS2
             button = content.Load<Texture2D>("Sized/Button");
             menuTitle = content.Load<Texture2D>("Sized/Title");
             shopTitle = content.Load<Texture2D>("Sized/ShopTitle");
+            statsTitle = content.Load<Texture2D>("Sized/StatsTitle");
             semiTransparentBackground = content.Load<Texture2D>("Sized/BlackBackground");
             speedBuff = content.Load<Texture2D>("Sized/Boots");
             rateOfFireBuff = content.Load<Texture2D>("Sized/Bow_64");
@@ -265,12 +287,13 @@ namespace GurevichI_PASS2
             pixel.SetData(new[] { Color.White });
 
             buttonOrigin = new Vector2(button.Width / 2, button.Height / 2);
-            titlePosition = new Vector2(GraphicsDevice.Viewport.Width / 2 - menuTitle.Width / 2, -25);
+            titlePosition = new Vector2(GraphicsDevice.Viewport.Width / 2 - menuTitle.Width / 2);
             titleRect = new Rectangle(graphicsDevice.Viewport.Width / 2 - menuTitle.Width / 2, graphicsDevice.Viewport.Height / 4, menuTitle.Width, menuTitle.Height);
             button1Position = new Vector2(graphicsDevice.Viewport.Width / 2 - button.Width / 2 - 10, titleRect.Bottom - 200);
             button2Position = new Vector2(graphicsDevice.Viewport.Width / 2 - button.Width - 10, button1Position.Y + button.Height + 10);
             button3Position = new Vector2(graphicsDevice.Viewport.Width / 2 + 10, button1Position.Y + button.Height + 10);
             continueButtonPosition = new Vector2(centerX - button.Width / 2, GraphicsDevice.Viewport.Height - verticalPadding * 2.5f);
+
             continueMessagePosition = new Vector2(centerX - mainFont.MeasureString("Press Enter to Continue").X / 2f, GraphicsDevice.Viewport.Height - verticalPadding * 2.5f);
 
             Vector2 rateOfFireBuffCenter = new Vector2(rateOfFireBuff.Width / 2, rateOfFireBuff.Height / 2);
@@ -360,6 +383,28 @@ namespace GurevichI_PASS2
                     }
                 }
             }
+
+            try
+            {
+                // Inputting all the different variables and statistics into the statistics file
+                string[] lines = File.ReadAllLines(statsFilename);
+                highScore = int.Parse(lines[0]);
+                gamesPlayed = int.Parse(lines[1]);
+                shotsFired = int.Parse(lines[2]);
+                shotsHit = int.Parse(lines[3]);
+                topHitPercentage = float.Parse(lines[4]);
+                totalVillagersKilled = int.Parse(lines[5]);
+                totalCreepersKilled = int.Parse(lines[6]);
+                totalSkeletonsKilled = int.Parse(lines[7]);
+                totalPillagersKilled = int.Parse(lines[8]);
+                totalEndermenKilled = int.Parse(lines[9]);
+            }
+            catch (Exception statsFileException)
+            {
+                // Handle the exception, e.g., log the error or display a message to the user
+            }
+
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -370,89 +415,11 @@ namespace GurevichI_PASS2
             switch (currentGameState)
             {
                 case MENU:
-                    if (button1Rect.Contains(mouseState.Position))
-                    {
-                        button1Color = Color.Yellow;
-
-                    }
-                    else
-                    {
-                        button1Color = Color.White;
-
-                    }
-
-                    if (button2Rect.Contains(mouseState.Position))
-                    {
-                        button2Color = Color.Yellow;
-
-                    }
-                    else
-                    {
-                        button2Color = Color.White;
-
-                    }
-
-                    if (button3Rect.Contains(mouseState.Position))
-                    {
-                        button3Color = Color.Yellow;
-
-                    }
-                    else
-                    {
-                        button3Color = Color.White;
-
-                    }
-
-                    // Handle button clicks
-                    if (mouseState.LeftButton == ButtonState.Pressed && button1Rect.Contains(mouseState.Position))
-                    {
-                        currentGameState = INSTRUCTIONS;
-                    }
-                    if (mouseState.LeftButton == ButtonState.Pressed && button2Rect.Contains(mouseState.Position))
-                    {
-                        currentGameState = SHOP;
-                    }
-                    if (mouseState.LeftButton == ButtonState.Pressed && button3Rect.Contains(mouseState.Position))
-                    {
-                        Environment.Exit(0);
-                    }
-
-
-
-
-                    if (currentGameState == MENU)
-                    {
-                        if (MediaPlayer.State != MediaState.Playing)
-                        {
-                            MediaPlayer.IsRepeating = true;
-                            MediaPlayer.Play(menuMusic);
-                        }
-                    }
-                    else
-                    {
-                        MediaPlayer.Stop();
-                    }
-
+                    UpdateMenu(mouseState);
                     break;
 
                 case INSTRUCTIONS:
-
-                    if (mouseState.LeftButton == ButtonState.Pressed && continueButtonRect.Contains(mouseState.Position))
-                    {
-                        currentGameState = GAMEPLAY;
-                    }
-
-
-                    if (continueButtonRect.Contains(mouseState.Position))
-                    {
-                        continueButtonColor = Color.Yellow;
-
-                    }
-                    else
-                    {
-                        continueButtonColor = Color.White;
-
-                    }
+                    UpdateInstructions(mouseState);
                     break;
 
                 case GAMEPLAY:
@@ -476,6 +443,7 @@ namespace GurevichI_PASS2
 
                         arrows.Add(arrow);
                         fireRateTimer.Enabled = true;
+                        shotsFiredInRound++;
                         shotsFired++;
                     }
 
@@ -560,13 +528,15 @@ namespace GurevichI_PASS2
                             if (mobs[j] is Creeper creeper && creeper.HandleCollisionWithArrow(arrows[i], GraphicsDevice, grass1Rectangles, grass2Rectangles, cobblestoneRectangles, dirtRectangles, dirtTexture))
                             {
                                 // Remove the arrow that collided with the Creeper
-                                shotsHit++;
                                 arrows.RemoveAt(i);
+                                shotsHitInRound++;
+                                shotsHit++;
                                 break;
                             }
                             else if (mobs[j] is Villager villager && villager.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
+                                shotsHitInRound++;
                                 shotsHit++;
                                 break;
                             }
@@ -574,6 +544,7 @@ namespace GurevichI_PASS2
                             if (mobs[j] is Skeleton skeleton && skeleton.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
+                                shotsHitInRound++;
                                 shotsHit++;
                                 break;
                             }
@@ -582,12 +553,14 @@ namespace GurevichI_PASS2
                             else if (mobs[j] is Pillager pillager && pillager.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
+                                shotsHitInRound++;
                                 shotsHit++;
                                 break;
                             }
                             else if (mobs[j] is Enderman enderman && enderman.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
+                                shotsHitInRound++;
                                 shotsHit++;
                                 break;
                             }
@@ -627,7 +600,7 @@ namespace GurevichI_PASS2
                                 {
                                     playerScore += 40;
                                 }
-
+                                totalCreepersKilled++;
                                 killsInCurrentLevel++;
                             }
                             else if (creeper.Exploded)
@@ -650,6 +623,7 @@ namespace GurevichI_PASS2
 
                             if (skeleton.Hp <= 0)
                             {
+                                totalSkeletonsKilled++;
                                 killsInCurrentLevel++;
                             }
                         }
@@ -668,6 +642,7 @@ namespace GurevichI_PASS2
 
                             if (pillager.Hp <= 0)
                             {
+                                totalPillagersKilled++;
                                 killsInCurrentLevel++;
                             }
 
@@ -686,7 +661,7 @@ namespace GurevichI_PASS2
                                 {
                                     playerScore += 10;
                                 }
-
+                                totalEndermenKilled++;
                                 killsInCurrentLevel++;
 
                             }
@@ -706,6 +681,7 @@ namespace GurevichI_PASS2
 
                             if (villager.Hp <= 0)
                             {
+                                totalVillagersKilled++;
                                 killsInCurrentLevel++;
 
                             }
@@ -742,10 +718,11 @@ namespace GurevichI_PASS2
                         MediaPlayer.Stop();
                     }
 
-                    break;
 
-                case STATS:
-                    // Update logic for STATS state
+                    ExportStatisticsToFile();
+
+
+
                     break;
 
                 case RESULTS:
@@ -767,30 +744,71 @@ namespace GurevichI_PASS2
                     currentLevel = level.currentLevel;
                     levelScores[currentLevel - 1] = playerScore;
 
-                    if (shotsFired > 0)
-                    {
-                        hitPercentage = (double)shotsHit / shotsFired * 100;
-                    }
-                    else
-                    {
-                        hitPercentage = 0;
-                    }
+
+
+
 
                     // Check for user input to proceed to the next level
                     if (keyboardState.IsKeyDown(Keys.Enter))
                     {
                         // Reset variables for the next level
                         killsInCurrentLevel = 0;
-                        shotsFired = 0;
-                        shotsHit = 0;
+                        shotsFiredInRound = 0;
+                        shotsHitInRound = 0;
 
-                        currentGameState = SHOP;
-                        StartNextLevel();
+                        if (level.currentLevel <= 5)
+                        {
+                            currentGameState = SHOP;
+                            StartNextLevel();
+                        }
+                        if (level.currentLevel > 5)
+                        {
+                            currentGameState = STATS;
+                        }
                     }
                     break;
 
-                case SHOP:
+                case STATS:
+                    if (level.currentLevel > 5 && !statsUpdated)
+                    {
+                        gamesPlayed++;
 
+                        if (highScore > playerScore)
+                        {
+                            highScore = playerScore;
+                        }
+
+                        totalKills = totalEndermenKilled + totalCreepersKilled + totalPillagersKilled + totalSkeletonsKilled + totalVillagersKilled;
+                        allTimeHitPercentage = (float)shotsHit / shotsFired * 100;
+                        avgShotsPerGame = shotsFired / gamesPlayed;
+                        avgKillsPerGame = totalKills / gamesPlayed;
+
+                        if (shotsFired > 0)
+                        {
+                            hitPercentage = (float)shotsHit / shotsFired * 100;
+                        }
+                        else
+                        {
+                            hitPercentage = 0;
+                        }
+
+                        // Update top hit percentage and top score if necessary
+                        if (hitPercentage > topHitPercentage)
+                        {
+                            topHitPercentage = (float)(hitPercentage);
+                        }
+                        if (playerScore > highScore)
+                        {
+                            highScore = playerScore;
+                        }
+
+                        statsUpdated = true; // Set the flag to true
+                        ExportStatisticsToFile();
+                    }
+                    break;
+
+
+                case SHOP:
                     if (mouseState.LeftButton == ButtonState.Pressed)
                     {
                         // Check for clicks on the Speed Buff rectangle and purchase conditions
@@ -944,7 +962,7 @@ namespace GurevichI_PASS2
                     spriteBatch.DrawString(mainFont, "SHOP", button2Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("SHOP") / 2, button2Color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
                     spriteBatch.Draw(button, button3Position + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(mainFont, "EXIT", button3Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("EXIT") / 2, button3Color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(mainFont, "STATS", button3Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("STATS") / 2, button3Color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
                     break;
 
                 case GAMEPLAY:
@@ -957,14 +975,49 @@ namespace GurevichI_PASS2
 
 
                     scoreTextGame = "Score: " + playerScore.ToString();
-
                     spriteBatch.DrawString(statsFont, scoreTextGame, scoreTextPositionGame, Color.White);
 
 
                     break;
 
                 case STATS:
-                    // Draw logic for STATS state
+                    spriteBatch.Draw(shopBackground, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+
+                    spriteBatch.Draw(statsTitle, titlePosition, Color.White);
+
+                    scoreTextGame = "Score: " + playerScore.ToString();
+                    spriteBatch.DrawString(statsFont, scoreTextGame, scoreTextPositionGame, Color.White);
+
+                    Color fontColor = Color.White;
+
+                    // Calculate the starting position for the statistics text
+                    float startX = boxX + horizontalPadding;
+                    float startY = boxY + verticalPadding;
+
+                    // Define the spacing between lines
+                    float lineHeight = statsFont.LineSpacing * 1f;
+
+                    float startXRight = boxX + boxWidth - horizontalPadding * 5f;
+                    // Subtract the column width from the startXRight to mak e sure the text is inside the box
+
+
+                    // Draw the statistics
+                    spriteBatch.DrawString(statsFont, $"High Score: {highScore}", new Vector2(startX, startY), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Games Played: {gamesPlayed}", new Vector2(startX, startY + lineHeight), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Shots Fired: {shotsFired}", new Vector2(startX, startY + lineHeight * 2), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Shots Hit: {shotsHit}", new Vector2(startX, startY + lineHeight * 3), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Top Hit %: {topHitPercentage}", new Vector2(startX, startY + lineHeight * 4), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Average Shots: {avgShotsPerGame}", new Vector2(startX, startY + lineHeight * 5), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Average Kills: {avgKillsPerGame}", new Vector2(startX, startY + lineHeight * 6), fontColor);
+
+                    // Draw the statistics on the right side
+                    spriteBatch.DrawString(statsFont, $"Total Villagers Killed: {totalVillagersKilled}", new Vector2(startXRight, startY), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Total Creepers Killed: {totalCreepersKilled}", new Vector2(startXRight, startY + lineHeight * 1), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Total Skeletons Killed: {totalSkeletonsKilled}", new Vector2(startXRight, startY + lineHeight * 2), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Total Pillagers Killed: {totalPillagersKilled}", new Vector2(startXRight, startY + lineHeight * 3), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Total Enderman Killed: {totalEndermenKilled}", new Vector2(startXRight, startY + lineHeight * 4), fontColor);
+                    spriteBatch.DrawString(statsFont, $"Total Kills: {totalKills}", new Vector2(startXRight, startY + lineHeight * 5), fontColor);
+                    spriteBatch.DrawString(statsFont, $"All-Time Hit %: {allTimeHitPercentage}", new Vector2(startXRight, startY + lineHeight * 6), fontColor);
                     break;
 
                 case INSTRUCTIONS:
@@ -1020,11 +1073,11 @@ namespace GurevichI_PASS2
                     spriteBatch.DrawString(statsFont, killsText, tempStatsPosition, Color.White);
 
                     tempStatsPosition.Y += statsFont.LineSpacing;
-                    string shotsFiredText = "Shots Fired: " + shotsFired;
+                    string shotsFiredText = "Shots Fired: " + shotsFiredInRound;
                     spriteBatch.DrawString(statsFont, shotsFiredText, tempStatsPosition, Color.White);
 
                     tempStatsPosition.Y += statsFont.LineSpacing;
-                    string shotsHitText = "Shots Hit: " + shotsHit;
+                    string shotsHitText = "Shots Hit: " + shotsHitInRound;
                     spriteBatch.DrawString(statsFont, shotsHitText, tempStatsPosition, Color.White);
 
                     tempStatsPosition.Y += statsFont.LineSpacing;
@@ -1187,6 +1240,101 @@ namespace GurevichI_PASS2
         {
             level.currentLevel++;
             levelInitialized = false;
+        }
+
+        void ExportStatisticsToFile()
+        {
+            File.WriteAllLines(statsFilename, new string[]{ highScore.ToString(), gamesPlayed.ToString(),
+        shotsFired.ToString(), shotsHit.ToString(), topHitPercentage.ToString(), totalVillagersKilled.ToString(),
+        totalCreepersKilled.ToString(), totalSkeletonsKilled.ToString(), totalPillagersKilled.ToString(),
+        totalEndermenKilled.ToString()});
+        }
+
+        private void UpdateMenu(MouseState mouseState)
+        {
+            if (button1Rect.Contains(mouseState.Position))
+            {
+                button1Color = Color.Yellow;
+
+            }
+            else
+            {
+                button1Color = Color.White;
+
+            }
+
+            if (button2Rect.Contains(mouseState.Position))
+            {
+                button2Color = Color.Yellow;
+
+            }
+            else
+            {
+                button2Color = Color.White;
+
+            }
+
+            if (button3Rect.Contains(mouseState.Position))
+            {
+                button3Color = Color.Yellow;
+
+            }
+            else
+            {
+                button3Color = Color.White;
+
+            }
+
+            // Handle button clicks
+            if (mouseState.LeftButton == ButtonState.Pressed && button1Rect.Contains(mouseState.Position))
+            {
+                currentGameState = INSTRUCTIONS;
+            }
+            if (mouseState.LeftButton == ButtonState.Pressed && button2Rect.Contains(mouseState.Position))
+            {
+                currentGameState = SHOP;
+            }
+            if (mouseState.LeftButton == ButtonState.Pressed && button3Rect.Contains(mouseState.Position))
+            {
+                currentGameState = STATS;
+            }
+
+
+
+
+            if (currentGameState == MENU)
+            {
+                if (MediaPlayer.State != MediaState.Playing)
+                {
+                    MediaPlayer.IsRepeating = true;
+                    MediaPlayer.Play(menuMusic);
+                }
+            }
+            else
+            {
+                MediaPlayer.Stop();
+            }
+        }
+
+        private void UpdateInstructions(MouseState mouseState)
+        {
+
+            if (mouseState.LeftButton == ButtonState.Pressed && continueButtonRect.Contains(mouseState.Position))
+            {
+                currentGameState = GAMEPLAY;
+            }
+
+
+            if (continueButtonRect.Contains(mouseState.Position))
+            {
+                continueButtonColor = Color.Yellow;
+
+            }
+            else
+            {
+                continueButtonColor = Color.White;
+
+            }
         }
     }
 }

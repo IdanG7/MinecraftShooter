@@ -6,36 +6,47 @@ namespace GurevichI_PASS2
 {
     public class Arrow
     {
-        public Texture2D _arrowTexture;
-        public Vector2 _position;
-        public float _speed;
-        public int _direction;
-        public int _damage;
+        public Texture2D arrowTexture;
+        public Vector2 position;
+        public float speed;
+        public int direction;
+        public int damage;
 
         public Arrow(Texture2D arrowTexture, Vector2 position, float arrowSpeed, int direction, int damage)
         {
-            _arrowTexture = arrowTexture;
-            _position = position;
-            _speed = arrowSpeed;
-            _direction = direction;
-            _damage = damage;
+            this.arrowTexture = arrowTexture;
+            this.position = position;
+            speed = arrowSpeed;
+            this.direction = direction;
+            this.damage = damage;
 
 
         }
 
+        public Vector2 GetCenter()
+        {
+            return new Vector2(position.X + arrowTexture.Width / 2, position.Y + arrowTexture.Height / 2);
+        }
+
+        public float GetRadius()
+        {
+            return Math.Min(arrowTexture.Width, arrowTexture.Height) / 2;
+        }
+
+
         public Rectangle BoundingBox
         {
-            get { return new Rectangle((int)_position.X, (int)_position.Y, _arrowTexture.Width, _arrowTexture.Height); }
+            get { return new Rectangle((int)position.X, (int)position.Y, arrowTexture.Width, arrowTexture.Height); }
         }
 
         public void Update(GameTime gameTime)
         {
-            _position.Y += _speed * _direction;
+            position.Y += speed * direction;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_arrowTexture, _position, Color.White);
+            spriteBatch.Draw(arrowTexture, position, Color.White);
         }
     }
 

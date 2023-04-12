@@ -30,8 +30,8 @@ namespace GurevichI_PASS2
         public float offScreenTimer;
 
 
-        private List<Arrow> arrows;
-        private Texture2D arrowTexture;
+        public List<Arrow> skeletonArrows;
+        private Texture2D downArrowTexture;
 
         private float rateOfFireTimer;
 
@@ -59,11 +59,12 @@ namespace GurevichI_PASS2
 
             offScreenTimer = 1;
 
-            arrowTexture = content.Load<Texture2D>("Sized/ArrowDown");
+            downArrowTexture = content.Load<Texture2D>("Sized/ArrowDown");
 
             // Initialize the arrows list
-            arrows = new List<Arrow>();
+            skeletonArrows = new List<Arrow>();
         }
+
 
         public new Rectangle BoundingBox
         {
@@ -134,18 +135,18 @@ namespace GurevichI_PASS2
             if (rateOfFireTimer >= RateOfFireCooldown)
             {
                 Vector2 arrowPosition = new Vector2(position.X + Texture.Width / 2, position.Y);
-                Arrow arrow = new Arrow(arrowTexture, position, ArrowSpeed, 1, ArrowDamage);
+                Arrow arrow = new Arrow(downArrowTexture, position, ArrowSpeed, 1, ArrowDamage);
 
-                arrows.Add(arrow);
+                skeletonArrows.Add(arrow);
                 rateOfFireTimer = 0;
             }
 
-            for (int i = arrows.Count - 1; i >= 0; i--)
+            for (int i = skeletonArrows.Count - 1; i >= 0; i--)
             {
-                arrows[i].Update(gameTime);
-                if (arrows[i]._position.Y < 0 || arrows[i]._position.Y > graphicsDevice.Viewport.Height)
+                skeletonArrows[i].Update(gameTime);
+                if (skeletonArrows[i].position.Y < 0 || skeletonArrows[i].position.Y > graphicsDevice.Viewport.Height)
                 {
-                    arrows.RemoveAt(i);
+                    skeletonArrows.RemoveAt(i);
                 }
             }
         }
@@ -155,7 +156,7 @@ namespace GurevichI_PASS2
             if (arrow.BoundingBox.Intersects(BoundingBox) && !ToRemove)
             {
                 // Handle the collision
-                Hp -= arrow._damage;
+                Hp -= arrow.damage;
 
                 if (Hp <= 0)
                 {
@@ -168,13 +169,33 @@ namespace GurevichI_PASS2
             return false; // Return false to indicate no collision or handling
         }
 
+        public bool CheckPlayerCollisionWithSkeletonArrows(Player player)
+        {
+            for (int i = skeletonArrows.Count - 1; i >= 0; i--)
+            {
+                Vector2 arrowCenter = skeletonArrows[i].GetCenter();
+                Vector2 playerCenter = player.GetCenter();
+                float combinedRadius = skeletonArrows[i].GetRadius() + player.GetRadius();
+
+                if (Vector2.DistanceSquared(arrowCenter, playerCenter) <= combinedRadius * combinedRadius)
+                {
+                    // Remove the arrow that collided with the player
+                    skeletonArrows.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             // Draw the skeleton
             spriteBatch.Draw(Texture, position, Color.White);
 
             // Draw the arrows
-            foreach (Arrow arrow in arrows)
+            foreach (Arrow arrow in skeletonArrows)
             {
                 arrow.Draw(spriteBatch);
             }

@@ -5,7 +5,9 @@
   <Config />
   <SourceFiles>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/../../../../../../../Downloads/Nacho_64.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Fonts/CrackFont.spritefont</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Fonts/MainFont.spritefont</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Fonts/SmallText.spritefont</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Fonts/StatFont.spritefont</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Music/Gameplay.mp3</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Music/Menu.mp3</File>
@@ -54,7 +56,11 @@
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Alex_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/ArrowDown.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/ArrowUp.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/BlackBackground.jpg</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/BlankPixel.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Boots.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Bottle.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Bow_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Button.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Cobblestone_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Creeper_64.png</File>
@@ -68,6 +74,7 @@
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/IconFireRate_32.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/IconPoints_32.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/IconSpeed_32.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/itemframe.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/MenuBG1.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/MenuBG2.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/MenuBG3.png</File>
@@ -87,6 +94,7 @@
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Splat_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/StatsTitle.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Steve_64.png</File>
+    <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Sword.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Title.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Trader_64.png</File>
     <File>/Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/Content/Sized/Villager_64.png</File>
@@ -101,6 +109,14 @@
   </SourceFiles>
   <DestFiles>
     <File>Sized/Nacho_64.png</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

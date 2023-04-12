@@ -68,7 +68,7 @@ namespace GurevichI_PASS2
                 }
                 else
                 {
-                    Hp -= arrow._damage;
+                    Hp -= arrow.damage;
 
                     if (Hp <= 0)
                     {

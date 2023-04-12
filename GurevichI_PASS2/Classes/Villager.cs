@@ -50,7 +50,7 @@ namespace GurevichI_PASS2
         {
             if (BoundingBox.Intersects(arrow.BoundingBox))
             {
-                Hp -= arrow._damage;
+                Hp -= arrow.damage;
                 if (Hp <= 0)
                 {
                     ToRemove = true;

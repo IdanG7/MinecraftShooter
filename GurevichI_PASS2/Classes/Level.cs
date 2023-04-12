@@ -83,7 +83,7 @@ namespace GurevichI_PASS2
             {
                 case 1:
                     totalMobsInCurrentLevel = 10;
-                    maxMobsOnScreen = 2;
+                    maxMobsOnScreen = 1;
                     spawnTime = 2f;
                     break;
                 case 2:
@@ -116,21 +116,20 @@ namespace GurevichI_PASS2
             switch (currentLevel)
             {
                 case 1:
-                    if (randomValue <= 70)
-                    {
+                    /*  if (randomValue <= 70)
+                      {
 
-                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height - player.texture.Height));
-                        newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
-                    }
-                    else if (randomValue <= 90)
-                    {
+                          villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height - player.texture.Height));
+                          newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
+                      }
+                      else if (randomValue <= 90)
+                      {
 
-                        creeperPosition = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - creeperTexture.Width), -creeperTexture.Height);
-                        newMob = new Creeper(content, creeperTexture, creeperPosition, player.Position, creeperSpeed, graphicsDevice, explodeTexture, creeperHp);
-                    }
-                    else
+                          creeperPosition = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - creeperTexture.Width), -creeperTexture.Height);
+                          newMob = new Creeper(content, creeperTexture, creeperPosition, player.Position, creeperSpeed, graphicsDevice, explodeTexture, creeperHp);
+                      }*/
+                    if (randomValue <= 100)
                     {
-
                         skeletonPosition = new Vector2(graphicsDevice.Viewport.Width / 2 - skeletonTexture.Width / 2, -skeletonTexture.Height);
                         newMob = new Skeleton(content, skeletonTexture, skeletonPosition, skeletonSpeed, graphicsDevice, skeletonHp);
                     }
@@ -139,7 +138,7 @@ namespace GurevichI_PASS2
                 case 2:
                     if (randomValue <= 50)
                     {
-                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height));
+                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height - player.texture.Height));
                         newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
                     }
                     else if (randomValue <= 80)
@@ -157,7 +156,7 @@ namespace GurevichI_PASS2
                 case 3:
                     if (randomValue <= 40)
                     {
-                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height));
+                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height - player.texture.Height));
                         newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
                     }
                     else if (randomValue <= 60)
@@ -180,7 +179,7 @@ namespace GurevichI_PASS2
                 case 4:
                     if (randomValue <= 50)
                     {
-                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height));
+                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height - player.texture.Height));
                         newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
                     }
                     else if (randomValue <= 65)
@@ -210,7 +209,7 @@ namespace GurevichI_PASS2
                 case 5:
                     if (randomValue <= 10)
                     {
-                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height));
+                        villagerPosition = new Vector2(-villagerTexture.Width, Game1.random.Next(0, graphicsDevice.Viewport.Height - villagerTexture.Height - player.texture.Height));
                         newMob = new Villager(content, villagerTexture, villagerPosition, villagerSpeed, graphicsDevice, villagerHp);
                     }
                     else if (randomValue <= 30)

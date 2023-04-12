@@ -31,36 +31,54 @@ namespace GurevichI_PASS2
 
         Song backgroundMusic;
         Song menuMusic;
-
+        Song resultMusic;
 
         private Player player;
-        private Enderman enderman;
         private Level level;
-        // Add this in the Game1 class, along with the other variables
+        public Arrow arrow;
+        public Skeleton skeleton;
 
-        private int playerScore;
+        int arrowDamage;
+
+        private int playerScore = 500;
         private int[] levelScores = new int[5];
         private int currentLevel;
         private int killsInCurrentLevel;
         private int shotsFired;
         private int shotsHit;
-        private double hitPercentage;
 
-
-
+        double hitPercentage;
+        string scoreTextGame;
+        string levelScoreText;
+        string continueMessage;
+        string scoreText;
+        string instructionHeader;
+        string moveInstructions;
+        string shootInstructions;
+        string goalInstructions;
 
         List<Arrow> arrows;
         List<Mob> mobs;
+        List<Vector2> iconPositions = new List<Vector2>();
+
 
         List<Rectangle> grass1Rectangles = new List<Rectangle>();
         List<Rectangle> grass2Rectangles = new List<Rectangle>();
         List<Rectangle> cobblestoneRectangles = new List<Rectangle>();
         List<Rectangle> dirtRectangles = new List<Rectangle>();
+        Rectangle semiTransparentBackgroundRec;
+        Rectangle smallSemiTransparentBackgroundRec;
 
         Rectangle titleRect;
         Rectangle button1Rect;
         Rectangle button2Rect;
         Rectangle button3Rect;
+        Rectangle continueButtonRect;
+        Rectangle speedBuffRect;
+        Rectangle pointsBuffRect;
+        Rectangle damageBuffRect;
+        Rectangle rateOfFireRect;
+        Rectangle popupBackgroundRect;
 
         Vector2 titlePosition;
         Vector2 button1Position;
@@ -69,29 +87,91 @@ namespace GurevichI_PASS2
         Vector2 levelScoresPosition;
         Vector2 statsPosition;
         Vector2 scoreTextPosition;
+        Vector2 continueButtonPosition;
+        Vector2 scoreTextPositionGame;
+        Vector2 tempLevelScoresPosition;
+        Vector2 instructionHeaderPosition;
+        Vector2 moveInstructionsPos;
+        Vector2 shootInstructionsPos;
+        Vector2 goalInstructionsPos;
+        Vector2 rateofFirePos;
+        Vector2 pointsBuffPos;
+        Vector2 speedBuffPos;
+        Vector2 damageBuffPos;
+        Vector2 buttonOrigin;
+        Vector2 continueMessagePosition;
+        Vector2 itemFrame1Pos;
+        Vector2 itemFrame2Pos;
+        Vector2 itemFrame3Pos;
+        Vector2 itemFrame4Pos;
+        Vector2 popupTextPosition;
 
-        public static Vector2 playerPosition;
+        Texture2D playerTexture;
+        Texture2D cobblestoneTexture;
+        Texture2D grass1Texture;
+        Texture2D grass2Texture;
+        Texture2D dirtTexture;
+        Texture2D background;
+        Texture2D shopBackground;
+        Texture2D button;
+        Texture2D menuTitle;
+        Texture2D shopTitle;
+        Texture2D arrowTexture;
+        Texture2D semiTransparentBackground;
+        Texture2D traderTexture;
+        Texture2D speedBuff;
+        Texture2D damageBuff;
+        Texture2D pointsBuff;
+        Texture2D rateOfFireBuff;
+        Texture2D speedBuffIcon;
+        Texture2D damageBuffIcon;
+        Texture2D pointsBuffIcon;
+        Texture2D rateOfFireBuffIcon;
+        Texture2D itemFrame;
+        Texture2D pixel;
 
-        public Texture2D playerTexture;
-        public Texture2D villagerTexture;
-        public Texture2D creeperTexture;
-        public Texture2D skeletonTexture;
-        public Texture2D pillagerTexture;
-        public Texture2D endermanTexture;
-        public Texture2D explodeTexture;
-        public Texture2D cobblestoneTexture;
-        public Texture2D grass1Texture;
-        public Texture2D grass2Texture;
-        public Texture2D dirtTexture;
-        public Texture2D background;
-        public Texture2D button;
-        public Texture2D menuTitle;
-        public Texture2D arrowTexture;
-        public Texture2D shieldTexture;
-        public Texture2D semiTransparentBackground;
+        int boxWidth;
+        int boxHeight;
+        int box2Height;
+        int boxX;
+        int boxY;
+        int box2Y;
+
+        bool speedBuffActive = false;
+        bool damageBuffActive = false;
+        bool rateOfFireBuffActive = false;
+        bool pointsBuffActive = false;
+
+
+        private bool showPopup = false;
+        private string popupText = "";
+        private Vector2 popupPosition;
+        private Color popupColor = Color.White;
+
+        int speedBuffCost = 100;
+        int damageBuffCost = 200;
+        int rateOfFireBuffCost = 300;
+        int pointsBuffCost = 500;
+
+
+        float horizontalPadding;
+        float verticalPadding;
+        float centerX;
+        float centerY;
+        float iconPadding = 10.0f;
+        float buttonScale = 0.8f;
 
         SpriteFont mainFont;
         SpriteFont statsFont;
+        SpriteFont smallText;
+
+        int popupBackgroundWidth = 350; // Adjust this value according to your desired width
+        int popupBackgroundHeight = 100; // Adjust this value according to your desired height
+
+        Color button1Color = Color.White;
+        Color button2Color = Color.White;
+        Color button3Color = Color.White;
+        Color continueButtonColor = Color.White;
 
         float elapsedSpawnTime = 0f;
         int totalMobsInCurrentLevel;
@@ -100,9 +180,9 @@ namespace GurevichI_PASS2
         bool levelInitialized = false;
 
         float arrowSpeed = 5f;
-        bool isDisabled;
 
         Timer fireRateTimer;
+        private double initialFireRateInterval = 333;
 
         private float resultsScreenDelay = 0f;
         private float resultsScreenDelayDuration = 1f; // Duration in seconds
@@ -120,12 +200,10 @@ namespace GurevichI_PASS2
         {
             arrows = new List<Arrow>();
 
-            fireRateTimer = new Timer(333);
+            fireRateTimer = new Timer(initialFireRateInterval);
             fireRateTimer.Elapsed += (sender, args) => fireRateTimer.Enabled = false;
 
             mobs = new List<Mob>();
-
-            TargetElapsedTime = TimeSpan.FromTicks(10000000 / 60); // 60 FPS
 
             base.Initialize();
         }
@@ -136,62 +214,132 @@ namespace GurevichI_PASS2
             spriteBatch = new SpriteBatch(GraphicsDevice);
             graphicsDevice = GraphicsDevice;
 
-            // Load textures
-            villagerTexture = content.Load<Texture2D>("Sized/Villager_64");
-            creeperTexture = content.Load<Texture2D>("Sized/Creeper_64");
-            explodeTexture = content.Load<Texture2D>("Sized/Explode_200");
-            skeletonTexture = content.Load<Texture2D>("Sized/Skeleton_64");
-            pillagerTexture = content.Load<Texture2D>("Sized/Pillager_64");
-            endermanTexture = content.Load<Texture2D>("Sized/Enderman_64");
+            boxWidth = (int)(GraphicsDevice.Viewport.Width * 1);
+            boxHeight = (int)(GraphicsDevice.Viewport.Height * 0.8);
+            box2Height = (int)(GraphicsDevice.Viewport.Height * 0.8);
+            boxX = (GraphicsDevice.Viewport.Width - boxWidth) / 2;
+            boxY = (GraphicsDevice.Viewport.Height - boxHeight) / 2;
+            box2Y = (int)(centerY + (box2Height / 2 - 25) + (verticalPadding * 0.2f));
 
-            shieldTexture = content.Load<Texture2D>("Sized/Shield_48");
+
+            horizontalPadding = GraphicsDevice.Viewport.Width * 0.1f;
+            verticalPadding = GraphicsDevice.Viewport.Height * 0.1f;
+            centerX = GraphicsDevice.Viewport.Width / 2;
+            centerY = GraphicsDevice.Viewport.Height / 2;
+
 
             // Load font
             mainFont = content.Load<SpriteFont>("Fonts/MainFont");
             statsFont = content.Load<SpriteFont>("Fonts/StatFont");
+            smallText = content.Load<SpriteFont>("Fonts/SmallText");
 
             // Load player-related assets
             playerTexture = content.Load<Texture2D>("Sized/Nacho_64");
             arrowTexture = content.Load<Texture2D>("Sized/ArrowUp");
-            player = new Player(playerTexture, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - playerTexture.Height), 3f);
 
             // Load level-related assets
             cobblestoneTexture = content.Load<Texture2D>("Sized/CobbleStone_64");
             grass2Texture = content.Load<Texture2D>("Sized/Grass2_64");
             grass1Texture = content.Load<Texture2D>("Sized/Grass1_64");
             dirtTexture = content.Load<Texture2D>("Sized/Dirt_64");
-            level = new Level(content, graphicsDevice, player);
+            speedBuffIcon = content.Load<Texture2D>("Sized/IconSpeed_32");
+            rateOfFireBuffIcon = content.Load<Texture2D>("Sized/IconFireRate_32");
+            damageBuffIcon = content.Load<Texture2D>("Sized/IconDamage_32");
+            pointsBuffIcon = content.Load<Texture2D>("Sized/IconPoints_32");
+
 
             // Load menu-related assets
             background = content.Load<Texture2D>("Sized/MenuBG1");
+            shopBackground = content.Load<Texture2D>("Raw/Dirt");
             button = content.Load<Texture2D>("Sized/Button");
             menuTitle = content.Load<Texture2D>("Sized/Title");
+            shopTitle = content.Load<Texture2D>("Sized/ShopTitle");
+            semiTransparentBackground = content.Load<Texture2D>("Sized/BlackBackground");
+            speedBuff = content.Load<Texture2D>("Sized/Boots");
+            rateOfFireBuff = content.Load<Texture2D>("Sized/Bow_64");
+            damageBuff = content.Load<Texture2D>("Sized/Sword");
+            pointsBuff = content.Load<Texture2D>("Sized/Bottle");
+            itemFrame = content.Load<Texture2D>("Sized/itemframe");
 
+            pixel = new Texture2D(GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+
+            buttonOrigin = new Vector2(button.Width / 2, button.Height / 2);
             titlePosition = new Vector2(GraphicsDevice.Viewport.Width / 2 - menuTitle.Width / 2, -25);
             titleRect = new Rectangle(graphicsDevice.Viewport.Width / 2 - menuTitle.Width / 2, graphicsDevice.Viewport.Height / 4, menuTitle.Width, menuTitle.Height);
             button1Position = new Vector2(graphicsDevice.Viewport.Width / 2 - button.Width / 2 - 10, titleRect.Bottom - 200);
             button2Position = new Vector2(graphicsDevice.Viewport.Width / 2 - button.Width - 10, button1Position.Y + button.Height + 10);
             button3Position = new Vector2(graphicsDevice.Viewport.Width / 2 + 10, button1Position.Y + button.Height + 10);
+            continueButtonPosition = new Vector2(centerX - button.Width / 2, GraphicsDevice.Viewport.Height - verticalPadding * 2.5f);
+            continueMessagePosition = new Vector2(centerX - mainFont.MeasureString("Press Enter to Continue").X / 2f, GraphicsDevice.Viewport.Height - verticalPadding * 2.5f);
+
+            Vector2 rateOfFireBuffCenter = new Vector2(rateOfFireBuff.Width / 2, rateOfFireBuff.Height / 2);
+            Vector2 speedBuffCenter = new Vector2(speedBuff.Width / 2, speedBuff.Height / 2);
+            Vector2 pointsBuffCenter = new Vector2(pointsBuff.Width / 2, pointsBuff.Height / 2);
+            Vector2 damageBuffCenter = new Vector2(damageBuff.Width / 2, damageBuff.Height / 2);
+
+
+
+            itemFrame1Pos = new Vector2(centerX - horizontalPadding * 4.5f, centerY - verticalPadding * 2.5f);
+            itemFrame2Pos = new Vector2(centerX + horizontalPadding * 3f, centerY - verticalPadding * 2.5f);
+            itemFrame3Pos = new Vector2(centerX - horizontalPadding * 4.5f, centerY + verticalPadding * 2f);
+            itemFrame4Pos = new Vector2(centerX + horizontalPadding * 3f, centerY + verticalPadding * 2f);
+
+
+            rateofFirePos = itemFrame1Pos + rateOfFireBuffCenter;
+            speedBuffPos = itemFrame2Pos + speedBuffCenter;
+            pointsBuffPos = itemFrame3Pos + pointsBuffCenter;
+            damageBuffPos = itemFrame4Pos + damageBuffCenter;
+
+            iconPositions.Add(new Vector2(GraphicsDevice.Viewport.Width - speedBuffIcon.Width - iconPadding, GraphicsDevice.Viewport.Height - speedBuffIcon.Height - iconPadding));
+            iconPositions.Add(new Vector2(GraphicsDevice.Viewport.Width - damageBuffIcon.Width - iconPadding, GraphicsDevice.Viewport.Height - speedBuffIcon.Height - damageBuffIcon.Height - iconPadding * 2));
+            iconPositions.Add(new Vector2(GraphicsDevice.Viewport.Width - pointsBuffIcon.Width - iconPadding, GraphicsDevice.Viewport.Height - speedBuffIcon.Height - damageBuffIcon.Height - pointsBuffIcon.Height - iconPadding * 3));
+            iconPositions.Add(new Vector2(GraphicsDevice.Viewport.Width - rateOfFireBuffIcon.Width - iconPadding, GraphicsDevice.Viewport.Height - speedBuffIcon.Height - damageBuffIcon.Height - pointsBuffIcon.Height - rateOfFireBuffIcon.Height - iconPadding * 4));
+
             button1Rect = new Rectangle((int)button1Position.X, (int)button1Position.Y, button.Width, button.Height);
             button2Rect = new Rectangle((int)button2Position.X, (int)button2Position.Y, button.Width, button.Height);
             button3Rect = new Rectangle((int)button3Position.X, (int)button3Position.Y, button.Width, button.Height);
+            continueButtonRect = new Rectangle((int)continueButtonPosition.X, (int)continueButtonPosition.Y, button.Width, button.Height);
 
-            // Variables for Results
-            semiTransparentBackground = new Texture2D(GraphicsDevice, 1, 1);
-            Color[] colorData = { Color.Black * 2f };
-            semiTransparentBackground.SetData(colorData);
+            rateOfFireRect = new Rectangle((int)rateofFirePos.X, (int)rateofFirePos.Y, rateOfFireBuff.Width, rateOfFireBuff.Height);
+            speedBuffRect = new Rectangle((int)speedBuffPos.X, (int)speedBuffPos.Y, speedBuff.Width, speedBuff.Height);
+            pointsBuffRect = new Rectangle((int)pointsBuffPos.X, (int)pointsBuffPos.Y, pointsBuff.Width, pointsBuff.Height);
+            damageBuffRect = new Rectangle((int)damageBuffPos.X, (int)damageBuffPos.Y, damageBuff.Width, damageBuff.Height);
+
+            semiTransparentBackgroundRec = new Rectangle(boxX, boxY, boxWidth, boxHeight);
+            smallSemiTransparentBackgroundRec = new Rectangle(boxX, box2Y, boxWidth, box2Height);
+
+            popupBackgroundRect = new Rectangle(
+                (GraphicsDevice.Viewport.Width - popupBackgroundWidth) / 2,
+                (GraphicsDevice.Viewport.Height - popupBackgroundHeight) / 2,
+                popupBackgroundWidth,
+                popupBackgroundHeight
+            );
+
+            levelScoresPosition = new Vector2(horizontalPadding, verticalPadding * 3);
+            statsPosition = new Vector2(GraphicsDevice.Viewport.Width - horizontalPadding * 3, verticalPadding * 3);
+            scoreTextPosition = new Vector2(centerX - mainFont.MeasureString("SCORE : ").X / 2f, verticalPadding);
+            scoreTextPositionGame = new Vector2();
+            instructionHeaderPosition = new Vector2(centerX - mainFont.MeasureString("INSTRUCTIONS").X / 2f, verticalPadding);
+            moveInstructionsPos = new Vector2(horizontalPadding, verticalPadding * 3f);
+            goalInstructionsPos = new Vector2(centerX - mainFont.MeasureString("Kill all the mobs before they go off the screen!").X / 4f, GraphicsDevice.Viewport.Height - verticalPadding * 4f);
+            shootInstructionsPos = new Vector2(horizontalPadding * -0.01f, verticalPadding * 4f);
+            popupPosition = new Vector2(
+                            popupBackgroundRect.X + (popupBackgroundRect.Width / 2) - (mainFont.MeasureString(popupText).X / 2),
+                            popupBackgroundRect.Y + (popupBackgroundRect.Height / 2) - (mainFont.MeasureString(popupText).Y / 2));
+            popupTextPosition = new Vector2(
+                   popupBackgroundRect.X + (popupBackgroundRect.Width / 12f) - (mainFont.MeasureString(popupText).X / 2),
+                   popupBackgroundRect.Y + (popupBackgroundRect.Height / 4.5f) - (mainFont.MeasureString(popupText).Y / 2)
+               );
 
 
-
-            levelScoresPosition = new Vector2(100, 170);
-            statsPosition = new Vector2(GraphicsDevice.Viewport.Width - 250, 170);
-
-            scoreTextPosition = new Vector2((GraphicsDevice.Viewport.Width / 2) - 125, 120);
-
+            player = new Player(playerTexture, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - playerTexture.Height), 3f);
+            level = new Level(content, graphicsDevice, player);
 
             // Load background music
             backgroundMusic = content.Load<Song>("Music/Gameplay");
             menuMusic = content.Load<Song>("Music/Menu");
+            resultMusic = content.Load<Song>("Music/Results");
 
             // Generate grass and cobblestone
             for (int x = 0; x < GraphicsDevice.Viewport.Width; x += grass2Texture.Width)
@@ -216,15 +364,61 @@ namespace GurevichI_PASS2
 
         protected override void Update(GameTime gameTime)
         {
+            KeyboardState keyboardState = Keyboard.GetState();
+            MouseState mouseState = Mouse.GetState();
+
             switch (currentGameState)
             {
                 case MENU:
-                    MouseState mouseState = Mouse.GetState();
-                    button1Rect = new Rectangle((int)button1Position.X, (int)button1Position.Y, button.Width, button.Height);
+                    if (button1Rect.Contains(mouseState.Position))
+                    {
+                        button1Color = Color.Yellow;
+
+                    }
+                    else
+                    {
+                        button1Color = Color.White;
+
+                    }
+
+                    if (button2Rect.Contains(mouseState.Position))
+                    {
+                        button2Color = Color.Yellow;
+
+                    }
+                    else
+                    {
+                        button2Color = Color.White;
+
+                    }
+
+                    if (button3Rect.Contains(mouseState.Position))
+                    {
+                        button3Color = Color.Yellow;
+
+                    }
+                    else
+                    {
+                        button3Color = Color.White;
+
+                    }
+
+                    // Handle button clicks
                     if (mouseState.LeftButton == ButtonState.Pressed && button1Rect.Contains(mouseState.Position))
                     {
-                        currentGameState = GAMEPLAY;
+                        currentGameState = INSTRUCTIONS;
                     }
+                    if (mouseState.LeftButton == ButtonState.Pressed && button2Rect.Contains(mouseState.Position))
+                    {
+                        currentGameState = SHOP;
+                    }
+                    if (mouseState.LeftButton == ButtonState.Pressed && button3Rect.Contains(mouseState.Position))
+                    {
+                        Environment.Exit(0);
+                    }
+
+
+
 
                     if (currentGameState == MENU)
                     {
@@ -241,20 +435,44 @@ namespace GurevichI_PASS2
 
                     break;
 
-                case GAMEPLAY:
-                    KeyboardState keyboardStateGame = Keyboard.GetState();
+                case INSTRUCTIONS:
 
-                    player.Update(keyboardStateGame, graphicsDevice, gameTime);
+                    if (mouseState.LeftButton == ButtonState.Pressed && continueButtonRect.Contains(mouseState.Position))
+                    {
+                        currentGameState = GAMEPLAY;
+                    }
+
+
+                    if (continueButtonRect.Contains(mouseState.Position))
+                    {
+                        continueButtonColor = Color.Yellow;
+
+                    }
+                    else
+                    {
+                        continueButtonColor = Color.White;
+
+                    }
+                    break;
+
+                case GAMEPLAY:
+
+                    player.Update(keyboardState, graphicsDevice, gameTime);
 
                     level.UpdateLevel();
 
-
-
-
-                    if (keyboardStateGame.IsKeyDown(Keys.Space) && fireRateTimer.Enabled == false)
+                    if (keyboardState.IsKeyDown(Keys.Space) && fireRateTimer.Enabled == false && player.fearTimer <= 0)
                     {
+                        if (damageBuffActive)
+                        {
+                            arrowDamage = 3;
+                        }
+                        else
+                        {
+                            arrowDamage = 1;
+                        }
 
-                        var arrow = new Arrow(arrowTexture, player.Position, arrowSpeed, -1, 1);
+                        Arrow arrow = new Arrow(arrowTexture, player.Position, arrowSpeed, -1, arrowDamage);
 
                         arrows.Add(arrow);
                         fireRateTimer.Enabled = true;
@@ -266,7 +484,7 @@ namespace GurevichI_PASS2
                     {
                         arrows[i].Update(gameTime);
 
-                        if (arrows[i]._position.Y + arrows[i]._arrowTexture.Height <= 0)
+                        if (arrows[i].position.Y + arrows[i].arrowTexture.Height <= 0)
                         {
                             arrows.RemoveAt(i);
                         }
@@ -334,7 +552,6 @@ namespace GurevichI_PASS2
                     }
 
 
-
                     // Check for collisions between player arrows and mobs
                     for (int i = arrows.Count - 1; i >= 0; i--)
                     {
@@ -354,12 +571,14 @@ namespace GurevichI_PASS2
                                 break;
                             }
 
-                            else if (mobs[j] is Skeleton skeleton && skeleton.HandleCollisionWithArrow(arrows[i]))
+                            if (mobs[j] is Skeleton skeleton && skeleton.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
                                 shotsHit++;
                                 break;
                             }
+
+
                             else if (mobs[j] is Pillager pillager && pillager.HandleCollisionWithArrow(arrows[i]))
                             {
                                 arrows.RemoveAt(i);
@@ -372,10 +591,25 @@ namespace GurevichI_PASS2
                                 shotsHit++;
                                 break;
                             }
-
                         }
                     }
 
+                    for (int i = 0; i < mobs.Count; i++)
+                    {
+                        if (mobs[i] is Skeleton skeleton)
+                        {
+                            if (skeleton.CheckPlayerCollisionWithSkeletonArrows(player))
+                            {
+                                player.Speed = 3f;
+                                fireRateTimer.Interval = initialFireRateInterval;
+
+                                damageBuffActive = false;
+                                speedBuffActive = false;
+                                rateOfFireBuffActive = false;
+                                pointsBuffActive = false;
+                            }
+                        }
+                    }
 
                     for (int j = mobs.Count - 1; j >= 0; j--)
                     {
@@ -385,7 +619,15 @@ namespace GurevichI_PASS2
 
                             if (creeper.Hp <= 0)
                             {
-                                playerScore += 40;
+                                if (pointsBuffActive)
+                                {
+                                    playerScore += 80;
+                                }
+                                else
+                                {
+                                    playerScore += 40;
+                                }
+
                                 killsInCurrentLevel++;
                             }
                             else if (creeper.Exploded)
@@ -396,7 +638,15 @@ namespace GurevichI_PASS2
                         else if (mobs[j] is Skeleton skeleton && skeleton.ToRemove)
                         {
                             mobs.RemoveAt(j);
-                            playerScore += 25;
+
+                            if (pointsBuffActive)
+                            {
+                                playerScore += 50;
+                            }
+                            else
+                            {
+                                playerScore += 25;
+                            }
 
                             if (skeleton.Hp <= 0)
                             {
@@ -406,7 +656,15 @@ namespace GurevichI_PASS2
                         else if (mobs[j] is Pillager pillager && pillager.ToRemove)
                         {
                             mobs.RemoveAt(j);
-                            playerScore += 25;
+
+                            if (pointsBuffActive)
+                            {
+                                playerScore += 50;
+                            }
+                            else
+                            {
+                                playerScore += 25;
+                            }
 
                             if (pillager.Hp <= 0)
                             {
@@ -420,7 +678,15 @@ namespace GurevichI_PASS2
 
                             if (enderman.Hp <= 0)
                             {
-                                playerScore += 100;
+                                if (pointsBuffActive)
+                                {
+                                    playerScore += 200;
+                                }
+                                else
+                                {
+                                    playerScore += 10;
+                                }
+
                                 killsInCurrentLevel++;
 
                             }
@@ -428,7 +694,15 @@ namespace GurevichI_PASS2
                         else if (mobs[j] is Villager villager && villager.ToRemove)
                         {
                             mobs.RemoveAt(j);
-                            playerScore += 10;
+
+                            if (pointsBuffActive)
+                            {
+                                playerScore += 20;
+                            }
+                            else
+                            {
+                                playerScore += 10;
+                            }
 
                             if (villager.Hp <= 0)
                             {
@@ -437,6 +711,7 @@ namespace GurevichI_PASS2
                             }
                         }
                     }
+
 
                     if (totalMobsInCurrentLevel == 0 && mobs.Count == 0)
                     {
@@ -459,7 +734,7 @@ namespace GurevichI_PASS2
                         if (MediaPlayer.State != MediaState.Playing)
                         {
                             MediaPlayer.IsRepeating = true;
-                            MediaPlayer.Play(backgroundMusic);
+                            //MediaPlayer.Play(backgroundMusic);
                         }
                     }
                     else
@@ -472,28 +747,177 @@ namespace GurevichI_PASS2
                 case STATS:
                     // Update logic for STATS state
                     break;
+
                 case RESULTS:
-                    KeyboardState keyboardStateResults = Keyboard.GetState();
+
+                    if (currentGameState == RESULTS)
+                    {
+                        if (MediaPlayer.State != MediaState.Playing)
+                        {
+                            MediaPlayer.IsRepeating = true;
+                            //  MediaPlayer.Play(resultMusic);
+                        }
+                    }
+                    else
+                    {
+                        MediaPlayer.Stop();
+                    }
+
 
                     currentLevel = level.currentLevel;
                     levelScores[currentLevel - 1] = playerScore;
-                    hitPercentage = shotsFired > 0 ? (double)shotsHit / shotsFired * 100 : 0;
+
+                    if (shotsFired > 0)
+                    {
+                        hitPercentage = (double)shotsHit / shotsFired * 100;
+                    }
+                    else
+                    {
+                        hitPercentage = 0;
+                    }
 
                     // Check for user input to proceed to the next level
-                    if (keyboardStateResults.IsKeyDown(Keys.Enter))
+                    if (keyboardState.IsKeyDown(Keys.Enter))
                     {
                         // Reset variables for the next level
                         killsInCurrentLevel = 0;
                         shotsFired = 0;
                         shotsHit = 0;
 
+                        currentGameState = SHOP;
                         StartNextLevel();
-                        currentGameState = GAMEPLAY;
+                    }
+                    break;
+
+                case SHOP:
+
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        // Check for clicks on the Speed Buff rectangle and purchase conditions
+                        if (!speedBuffActive && playerScore >= speedBuffCost && speedBuffRect.Contains(mouseState.Position))
+                        {
+                            speedBuffActive = true;
+                            playerScore -= speedBuffCost;
+                            player.Speed *= 2;
+                        }
+
+                        // Check for clicks on the Damage Buff rectangle and purchase conditions
+                        if (!damageBuffActive && playerScore >= damageBuffCost && damageBuffRect.Contains(mouseState.Position))
+                        {
+                            damageBuffActive = true;
+                            playerScore -= damageBuffCost;
+                            arrowDamage = 3;
+                        }
+
+                        // Check for clicks on the Rate of Fire Buff rectangle and purchase conditions
+                        if (!rateOfFireBuffActive && playerScore >= rateOfFireBuffCost && rateOfFireRect.Contains(mouseState.Position))
+                        {
+                            rateOfFireBuffActive = true;
+                            playerScore -= rateOfFireBuffCost;
+                            fireRateTimer.Interval = initialFireRateInterval / 2;
+                        }
+
+
+                        // Check for clicks on the Points Buff rectangle and purchase conditions
+                        if (!pointsBuffActive && playerScore >= pointsBuffCost && pointsBuffRect.Contains(mouseState.Position))
+                        {
+                            pointsBuffActive = true;
+                            playerScore -= pointsBuffCost;
+                        }
+                    }
+                    else
+                    {
+                        showPopup = false;
                     }
 
-                    break;
-                case SHOP:
-                    // Update logic for SHOP state
+                    // Show popup when hovering over the Rate of Fire Buff rectangle
+                    if (rateOfFireRect.Contains(mouseState.Position))
+                    {
+                        showPopup = true;
+                        popupText = $"Rate of Fire Upgrade\nPrice: {rateOfFireBuffCost}";
+
+
+                        if (playerScore >= rateOfFireBuffCost && !rateOfFireBuffActive)
+                        {
+                            popupColor = Color.Green;
+                        }
+                        else
+                        {
+                            popupColor = Color.Red;
+                        }
+                    }
+                    // Show popup when hovering over the Speed Buff rectangle
+                    else if (speedBuffRect.Contains(mouseState.Position))
+                    {
+                        showPopup = true;
+                        popupText = $"Speed Upgrade\nPrice: {speedBuffCost}";
+
+                        if (playerScore >= speedBuffCost && !speedBuffActive)
+                        {
+                            popupColor = Color.Green;
+                        }
+                        else
+                        {
+                            popupColor = Color.Red;
+                        }
+                    }
+                    // Show popup when hovering over the Damage Buff rectangle
+                    else if (damageBuffRect.Contains(mouseState.Position))
+                    {
+                        showPopup = true;
+                        popupText = $"Damage Upgrade\nPrice: {damageBuffCost}";
+
+                        if (playerScore >= damageBuffCost && !damageBuffActive)
+                        {
+                            popupColor = Color.Green;
+                        }
+                        else
+                        {
+                            popupColor = Color.Red;
+                        }
+                    }
+                    // Show popup when hovering over the Points Buff rectangle
+                    else if (pointsBuffRect.Contains(mouseState.Position))
+                    {
+                        showPopup = true;
+                        popupText = $"Points Upgrade\nPrice: {pointsBuffCost}";
+
+                        if (playerScore >= pointsBuffCost && !pointsBuffActive)
+                        {
+                            popupColor = Color.Green;
+                        }
+                        else
+                        {
+                            popupColor = Color.Red;
+                        }
+                    }
+                    else
+                    {
+                        showPopup = false;
+                    }
+
+                    // Check for click on a "Continue" or "Exit Shop" button
+                    // and change the game state back to the pre-level instructions or the next level
+                    if (mouseState.LeftButton == ButtonState.Pressed && continueButtonRect.Contains(mouseState.Position))
+                    {
+                        currentGameState = GAMEPLAY;
+                    }
+                    // Update active buffs display and behavior (deactivate on player hit by Skeleton arrow)
+                    // Check for player hit by Skeleton arrow and deactivate buffs accordingly
+
+
+
+                    if (continueButtonRect.Contains(mouseState.Position))
+                    {
+                        continueButtonColor = Color.Yellow;
+
+                    }
+                    else
+                    {
+                        continueButtonColor = Color.White;
+
+                    }
+
                     break;
             }
 
@@ -502,126 +926,86 @@ namespace GurevichI_PASS2
 
         protected override void Draw(GameTime gameTime)
         {
+            spriteBatch.Begin();
 
             switch (currentGameState)
             {
+
                 case MENU:
                     GraphicsDevice.Clear(Color.Green);
-
-                    spriteBatch.Begin();
 
                     spriteBatch.Draw(background, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
                     spriteBatch.Draw(menuTitle, titlePosition, Color.White);
 
-                    float buttonScale = 0.8f; // Adjust this value to change the button size
-                    Vector2 buttonOrigin = new Vector2(button.Width / 2, button.Height / 2);
-
                     spriteBatch.Draw(button, button1Position + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(mainFont, "PLAY GAME", button1Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("PLAY GAME") / 2, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(mainFont, "PLAY GAME", button1Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("PLAY GAME") / 2, button1Color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
 
                     spriteBatch.Draw(button, button2Position + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(mainFont, "SHOP", button2Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("SHOP") / 2, button2Color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+
                     spriteBatch.Draw(button, button3Position + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
-
-                    spriteBatch.End();
-
+                    spriteBatch.DrawString(mainFont, "EXIT", button3Position + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("EXIT") / 2, button3Color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
                     break;
 
                 case GAMEPLAY:
-
                     GraphicsDevice.Clear(Color.CornflowerBlue);
 
-                    spriteBatch.Begin();
-
-                    foreach (Rectangle grass1Rect in grass1Rectangles)
-                    {
-
-                        spriteBatch.Draw(grass1Texture, grass1Rect, Color.White);
-
-                    }
-
-                    foreach (Rectangle grass2Rect in grass2Rectangles)
-                    {
-                        spriteBatch.Draw(grass2Texture, grass2Rect, Color.White);
-                    }
-
-                    foreach (Rectangle cobblestoneRect in cobblestoneRectangles)
-                    {
-                        spriteBatch.Draw(cobblestoneTexture, cobblestoneRect, Color.White);
-                    }
-
-                    foreach (Rectangle dirtRect in dirtRectangles)
-                    {
-                        spriteBatch.Draw(dirtTexture, dirtRect, Color.White);
-                    }
-
-                    player.Draw(spriteBatch);
-
-                    foreach (Arrow arrow in arrows)
-                    {
-                        arrow.Draw(spriteBatch);
-                    }
-
-                    foreach (Villager villager in mobs.OfType<Villager>())
-                    {
-                        villager.Draw(spriteBatch);
-                    }
-
-                    foreach (Creeper creeper in mobs.OfType<Creeper>())
-                    {
-                        creeper.Draw(spriteBatch);
-                    }
+                    DrawLevelScreen();
+                    DrawItemsOnScreen();
+                    DrawIcons();
 
 
-                    foreach (Skeleton skeleton in mobs.OfType<Skeleton>())
-                    {
-                        skeleton.Draw(spriteBatch);
-                    }
 
-                    foreach (Pillager pillager in mobs.OfType<Pillager>())
-                    {
-                        pillager.Draw(spriteBatch, content);
-                    }
-
-                    foreach (Enderman enderman in mobs.OfType<Enderman>())
-                    {
-                        enderman.Draw(spriteBatch);
-                    }
-
-                    string scoreTextGame = "Score: " + playerScore.ToString();
-                    Vector2 scoreTextPositionGame = new Vector2(25, 25);
+                    scoreTextGame = "Score: " + playerScore.ToString();
 
                     spriteBatch.DrawString(statsFont, scoreTextGame, scoreTextPositionGame, Color.White);
 
 
-                    spriteBatch.End();
                     break;
+
                 case STATS:
                     // Draw logic for STATS state
                     break;
+
                 case INSTRUCTIONS:
-                    // Draw logic for INSTRUCTIONS state
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
+
+                    DrawLevelScreen();
+
+                    spriteBatch.Draw(semiTransparentBackground, semiTransparentBackgroundRec, Color.White * 0.4f);
+
+                    instructionHeader = "INSTRUCTIONS";
+                    spriteBatch.DrawString(mainFont, instructionHeader, instructionHeaderPosition, Color.Yellow);
+
+                    moveInstructions = "MOVE: Left and Right arrow keys";
+                    spriteBatch.DrawString(smallText, moveInstructions, moveInstructionsPos, Color.White);
+                    shootInstructions = "SHOOT: Spacebar";
+                    spriteBatch.DrawString(smallText, shootInstructions, shootInstructionsPos, Color.White);
+                    goalInstructions = "Kill all the mobs before they go off the screen!";
+                    spriteBatch.DrawString(smallText, goalInstructions, goalInstructionsPos, Color.White);
+
+                    spriteBatch.Draw(button, continueButtonPosition + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(mainFont, "CONTINUE", continueButtonPosition + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("CONTINUE") / 2, continueButtonColor, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+
+
                     break;
+
                 case RESULTS:
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
 
+                    DrawLevelScreen();
 
-                    spriteBatch.Begin();
-
-                    int boxWidth = (int)(GraphicsDevice.Viewport.Width * 1);
-                    int boxHeight = (int)(GraphicsDevice.Viewport.Height * 0.6);
-                    int boxX = (GraphicsDevice.Viewport.Width - boxWidth) / 2;
-                    int boxY = (GraphicsDevice.Viewport.Height - boxHeight) / 2;
-
-                    spriteBatch.Draw(semiTransparentBackground, new Rectangle(boxX, boxY, boxWidth, boxHeight), Color.White);
+                    spriteBatch.Draw(semiTransparentBackground, semiTransparentBackgroundRec, Color.White * 0.4f);
 
                     // Draw score on top
-                    string scoreText = "SCORE: " + playerScore.ToString();
+                    scoreText = "SCORE: " + playerScore.ToString();
                     spriteBatch.DrawString(mainFont, scoreText, scoreTextPosition, Color.Yellow, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
-
+                    tempLevelScoresPosition = levelScoresPosition;
                     // Draw level scores on the left side
-                    Vector2 tempLevelScoresPosition = levelScoresPosition;
+
                     for (int i = 0; i < levelScores.Length; i++)
                     {
-                        string levelScoreText = $"Level {i + 1}: {levelScores[i]}";
+                        levelScoreText = $"Level {i + 1}: {levelScores[i]}";
                         spriteBatch.DrawString(statsFont, levelScoreText, tempLevelScoresPosition, Color.White);
                         tempLevelScoresPosition.Y += statsFont.LineSpacing;
                     }
@@ -647,16 +1031,156 @@ namespace GurevichI_PASS2
                     string hitPercentageText = "Hit%: " + hitPercentage.ToString("0.00") + "%";
                     spriteBatch.DrawString(statsFont, hitPercentageText, tempStatsPosition, Color.White);
 
-                    spriteBatch.End();
+                    string continueMessage = "Press Enter To Continue";
+                    spriteBatch.DrawString(mainFont, continueMessage, continueMessagePosition, Color.White);
 
                     break;
 
                 case SHOP:
-                    // Draw logic for SHOP state
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
+
+                    spriteBatch.Draw(shopBackground, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+                    spriteBatch.Draw(shopTitle, titlePosition, Color.White);
+
+                    scoreTextGame = "Score: " + playerScore.ToString();
+
+                    spriteBatch.DrawString(statsFont, scoreTextGame, scoreTextPositionGame, Color.White);
+
+                    // Draw the shop item
+
+                    spriteBatch.Draw(itemFrame, itemFrame1Pos, Color.White);
+                    spriteBatch.Draw(itemFrame, itemFrame2Pos, Color.White);
+                    spriteBatch.Draw(itemFrame, itemFrame3Pos, Color.White);
+                    spriteBatch.Draw(itemFrame, itemFrame4Pos, Color.White);
+
+                    spriteBatch.Draw(rateOfFireBuff, rateofFirePos, Color.White);
+                    spriteBatch.Draw(pointsBuff, pointsBuffPos, Color.White);
+                    spriteBatch.Draw(speedBuff, speedBuffPos, Color.White);
+                    spriteBatch.Draw(damageBuff, damageBuffPos, Color.White);
+                    if (showPopup)
+                    {
+                        spriteBatch.Draw(pixel, popupBackgroundRect, Color.Black * 0.8f);
+                        spriteBatch.DrawString(statsFont, popupText, popupTextPosition, popupColor);
+                    }
+                    continueButtonPosition = new Vector2(centerX - button.Width / 2, box2Y + box2Height - verticalPadding - button.Height);
+                    spriteBatch.Draw(button, continueButtonPosition + buttonOrigin, null, Color.White, 0, buttonOrigin, buttonScale, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(mainFont, "CONTINUE", continueButtonPosition + new Vector2(button.Width / 2, button.Height / 2) - mainFont.MeasureString("CONTINUE") / 2, continueButtonColor, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
                     break;
+
             }
+            spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void DrawLevelScreen()
+        {
+            foreach (Rectangle grass1Rect in grass1Rectangles)
+            {
+                spriteBatch.Draw(grass1Texture, grass1Rect, Color.White);
+            }
+
+            foreach (Rectangle grass2Rect in grass2Rectangles)
+            {
+                spriteBatch.Draw(grass2Texture, grass2Rect, Color.White);
+            }
+
+            foreach (Rectangle cobblestoneRect in cobblestoneRectangles)
+            {
+                spriteBatch.Draw(cobblestoneTexture, cobblestoneRect, Color.White);
+            }
+
+            foreach (Rectangle dirtRect in dirtRectangles)
+            {
+                spriteBatch.Draw(dirtTexture, dirtRect, Color.White);
+            }
+
+        }
+
+        private void DrawItemsOnScreen()
+        {
+            foreach (Arrow arrow in arrows)
+            {
+                arrow.Draw(spriteBatch);
+            }
+
+            foreach (Villager villager in mobs.OfType<Villager>())
+            {
+                villager.Draw(spriteBatch);
+            }
+
+            foreach (Creeper creeper in mobs.OfType<Creeper>())
+            {
+                creeper.Draw(spriteBatch);
+            }
+
+
+            foreach (Skeleton skeleton in mobs.OfType<Skeleton>())
+            {
+                skeleton.Draw(spriteBatch);
+            }
+
+            foreach (Pillager pillager in mobs.OfType<Pillager>())
+            {
+                pillager.Draw(spriteBatch, content);
+            }
+
+            foreach (Enderman enderman in mobs.OfType<Enderman>())
+            {
+                enderman.Draw(spriteBatch);
+            }
+
+            player.Draw(spriteBatch);
+        }
+        private void DrawIcons()
+        {
+            // Draw the Speed Buff icon
+            Color speedBuffColor;
+            if (speedBuffActive)
+            {
+                speedBuffColor = Color.White;
+            }
+            else
+            {
+                speedBuffColor = new Color(255, 255, 255, 128);
+            }
+            spriteBatch.Draw(speedBuffIcon, iconPositions[0], speedBuffColor);
+
+            // Draw the Damage Buff icon
+            Color damageBuffColor;
+            if (damageBuffActive)
+            {
+                damageBuffColor = Color.White;
+            }
+            else
+            {
+                damageBuffColor = new Color(255, 255, 255, 128);
+            }
+            spriteBatch.Draw(damageBuffIcon, iconPositions[1], damageBuffColor);
+
+            Color pointsBuffColor;
+            if (pointsBuffActive)
+            {
+                pointsBuffColor = Color.White;
+            }
+            else
+            {
+                pointsBuffColor = new Color(255, 255, 255, 128);
+            }
+            spriteBatch.Draw(pointsBuffIcon, iconPositions[2], pointsBuffColor);
+
+            // Draw the Rate of Fire Buff icon
+            Color rateOfFireBuffColor;
+            if (rateOfFireBuffActive)
+            {
+                rateOfFireBuffColor = Color.White;
+            }
+            else
+            {
+                rateOfFireBuffColor = new Color(255, 255, 255, 128);
+            }
+            spriteBatch.Draw(rateOfFireBuffIcon, iconPositions[3], rateOfFireBuffColor);
+
         }
 
         private void StartNextLevel()
@@ -664,8 +1188,5 @@ namespace GurevichI_PASS2
             level.currentLevel++;
             levelInitialized = false;
         }
-
-
-
     }
 }

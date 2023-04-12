@@ -22,7 +22,7 @@ namespace GurevichI_PASS2
         private float explosionTimer = 0f;
 
         public Creeper(ContentManager content, Texture2D texture, Vector2 position, Vector2 playerPosition, float speed, GraphicsDevice graphicsDevice, Texture2D explosionTexture, int hp)
-            : base(texture, position, (int)3f, 3)
+            : base(texture, position, (int)3.5f, 3)
         {
             PointValue = 40;
             this.position = position;
@@ -70,7 +70,7 @@ namespace GurevichI_PASS2
         {
             if (arrow.BoundingBox.Intersects(BoundingBox) && !Exploded)
             {
-                Hp -= arrow._damage;
+                Hp -= arrow.damage;
 
                 if (Hp <= 0)
                 {
@@ -120,8 +120,11 @@ namespace GurevichI_PASS2
             }
             else if (!ToRemove)
             {
-                // Draw explosion texture
-                spriteBatch.Draw(explosionTexture, explosionPosition, Color.White);
+                // Create a destination rectangle with the same size as the Creeper texture
+                Rectangle destinationRect = new Rectangle((int)explosionPosition.X, (int)explosionPosition.Y, (int)(texture.Width * 1.5f), (int)(texture.Height * 1.5f));
+
+                // Draw the explosion texture scaled to the destination rectangle
+                spriteBatch.Draw(explosionTexture, destinationRect, Color.White);
             }
         }
     }

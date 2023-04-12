@@ -28,9 +28,9 @@ namespace GurevichI_PASS2
             {
                 sharedTeleportPoints = new Vector2[4];
                 sharedTeleportPoints[0] = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - texture.Width), 0);
-                sharedTeleportPoints[1] = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - texture.Width), Game1.random.Next(0, graphicsDevice.Viewport.Height - texture.Height));
-                sharedTeleportPoints[2] = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - texture.Width), Game1.random.Next(0, graphicsDevice.Viewport.Height - texture.Height));
-                sharedTeleportPoints[3] = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - texture.Width), Game1.random.Next(0, graphicsDevice.Viewport.Height - texture.Height));
+                sharedTeleportPoints[1] = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - texture.Width), Game1.random.Next(0, graphicsDevice.Viewport.Height - texture.Height - player.texture.Height));
+                sharedTeleportPoints[2] = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - texture.Width), Game1.random.Next(0, graphicsDevice.Viewport.Height - texture.Height - player.texture.Height));
+                sharedTeleportPoints[3] = new Vector2(Game1.random.Next(0, graphicsDevice.Viewport.Width - texture.Width), Game1.random.Next(0, graphicsDevice.Viewport.Height - texture.Height - player.texture.Height));
             }
 
             // Scramble the order of the middle 3 points
@@ -105,7 +105,7 @@ namespace GurevichI_PASS2
         {
             if (BoundingBox.Intersects(arrow.BoundingBox))
             {
-                Hp -= arrow._damage;
+                Hp -= arrow.damage;
 
                 if (Hp <= 0)
                 {

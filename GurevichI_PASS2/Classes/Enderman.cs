@@ -1,10 +1,16 @@
-﻿using System;
+﻿//Author: Idan Gurevich
+//File Name: Enderman.cs
+//Project Name: GurevichI_PASS2
+//Creation Date: April 1, 2023
+//Modified Date: April 11, 2023
+//Description: A class representing the Enderman mob, which can teleport and inflict fear to the player on teleport.
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GurevichI_PASS2
 {
+    // Enderman class inherits from Mob class
     public class Enderman : Mob
     {
         private Vector2 position;
@@ -19,11 +25,13 @@ namespace GurevichI_PASS2
         // Static teleport points shared by all Endermen
         private static Vector2[] sharedTeleportPoints;
 
+        // Enderman constructor
         public Enderman(ContentManager content, Texture2D texture, Vector2 position, GraphicsDevice graphicsDevice, int hp, Player player) : base(content.Load<Texture2D>("Sized/Enderman_64"), position, 0, 5)
         {
             this.position = position;
             this.player = player;
 
+            // Initialize sharedTeleportPoints if not already initialized
             if (sharedTeleportPoints == null)
             {
                 sharedTeleportPoints = new Vector2[4];
@@ -46,6 +54,7 @@ namespace GurevichI_PASS2
             teleportTimer = TeleportDuration;
         }
 
+        // Scramble an integer array
         private void ScrambleArray(int[] array)
         {
             int n = array.Length;
@@ -58,6 +67,7 @@ namespace GurevichI_PASS2
             }
         }
 
+        // Get the bounding box of the Enderman
         public new Rectangle BoundingBox
         {
             get
@@ -66,15 +76,19 @@ namespace GurevichI_PASS2
             }
         }
 
+
         public override void Update(GameTime gameTime, Vector2 playerPosition, GraphicsDevice graphicsDevice)
         {
+            // Update the teleport timer
             teleportTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            // Teleport the Enderman if the timer reaches 0
             if (teleportTimer <= 0)
             {
                 teleportTimer = TeleportDuration;
                 currentPointIndex++;
 
+                // Teleport to the player's position if reached the last point
                 if (currentPointIndex == 4)
                 {
                     teleportPoints[4] = playerPosition - new Vector2(0, Texture.Height);
@@ -86,12 +100,14 @@ namespace GurevichI_PASS2
                     if (!teleported)
                     {
                         player.InduceFear();
+                        Game1.endermanTeleport.CreateInstance().Play();
                         teleported = true;
                     }
                 }
                 else
                 {
                     ToRemove = true;
+                     Game1.endermanScream.CreateInstance().Play();
                 }
             }
             else
@@ -100,7 +116,12 @@ namespace GurevichI_PASS2
             }
         }
 
-
+        //Pre: arrow, position, texture, and damage 
+        //Post:After executing this subprogram, it will check whether the bounding box of the arrow intersects with the bounding box of the object. If there is a collision,
+        //the Hp value of the object will be decreased by the damage value of the arrow. If the Hp value becomes less than or equal to 0,
+        //the "ToRemove" bool of the object will be set to true. 
+        //The new mob object will have its texture, position, speed, and health points set appropriately.
+        //Desc: This method is used to handle collisions between an object and an arrow.
         public bool HandleCollisionWithArrow(Arrow arrow)
         {
             if (BoundingBox.Intersects(arrow.BoundingBox))
@@ -117,11 +138,10 @@ namespace GurevichI_PASS2
             return false;
         }
 
+        // Draw the Enderman
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, position, Color.White);
         }
-
-
     }
 }

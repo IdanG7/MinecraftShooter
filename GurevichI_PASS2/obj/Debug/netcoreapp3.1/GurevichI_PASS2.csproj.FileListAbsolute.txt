@@ -50,3 +50,28 @@
 /Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/obj/Debug/netcoreapp3.1/GurevichI_PASS2.dll
 /Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/obj/Debug/netcoreapp3.1/GurevichI_PASS2.pdb
 /Users/idang/Desktop/ICS4U1/Assignments/PASS2/GurevichI_PASS2 copy/GurevichI_PASS2/obj/Debug/netcoreapp3.1/GurevichI_PASS2.genruntimeconfig.cache
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\GurevichI_PASS2.exe
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\GurevichI_PASS2.deps.json
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\GurevichI_PASS2.runtimeconfig.json
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\GurevichI_PASS2.runtimeconfig.dev.json
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\GurevichI_PASS2.dll
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\GurevichI_PASS2.pdb
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\MonoGame.Framework.dll
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\linux-x64\native\libSDL2-2.0.so.0
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\linux-x64\native\libopenal.so.1
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\osx\native\libSDL2.dylib
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\osx\native\libopenal.1.dylib
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\SDL2.dll
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\soft_oal.dll
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\SDL2.dll
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\soft_oal.dll
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\bin\Debug\netcoreapp3.1\runtimes\osx\native\libSDL2-2.0.0.dylib
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.csproj.AssemblyReference.cache
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.GeneratedMSBuildEditorConfig.editorconfig
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.AssemblyInfoInputs.cache
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.AssemblyInfo.cs
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.csproj.CoreCompileInputs.cache
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.csproj.CopyComplete
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.dll
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.pdb
+D:\Downloads\MinecraftShooter-main\MinecraftShooter-main\GurevichI_PASS2\obj\Debug\netcoreapp3.1\GurevichI_PASS2.genruntimeconfig.cache
